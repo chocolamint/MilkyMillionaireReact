@@ -1,26 +1,50 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+import Player from './components/Player';
+import CPU from './components/CPU';
+import Card from './components/Card';
 
-const App: React.FC = () => {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+export default function App() {
+
+    const cpus = [{ name: "a" }, { name: "b" }, { name: "c" }, { name: "d" }];
+    const stack = {
+        cards: [{
+            cardSet: [{}]
+        }]
+    };
+    const message = "";
+
+    return (
+        <div className="main">
+            <ul className="computers">
+                {cpus.map(cpu => {
+                    // CPUを描画
+                    return (
+                        <li>
+                            <CPU name={cpu.name} />
+                        </li>
+                    );
+                })}
+            </ul >
+            <div className="field">
+                {stack.cards.map(cards =>
+                    <div className="card-set">
+                        {cards.cardSet.map(card =>
+                            <div className="card-container">
+                                <Card />
+                            </div>
+                        )}
+                    </div>
+                )}
+            </div >
+            <Player />
+            {message &&
+                <div className="message">
+                    <div className="message-text">
+                        {message}
+                    </div>
+                </div>
+            }
+        </div>
+    );
 }
-
-export default App;
