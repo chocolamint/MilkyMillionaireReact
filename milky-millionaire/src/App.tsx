@@ -9,7 +9,15 @@ export default function App() {
     const cpus = [{ name: "a" }, { name: "b" }, { name: "c" }, { name: "d" }];
     const stack = {
         cards: [{
-            cardSet: [{}]
+            cardSet: [{
+                suit: "heart", rank: 1
+            }, {
+                suit: "diamond", rank: 2
+            }, {
+                suit: "club", rank: 13
+            }, {
+                joker: true
+            }] as const
         }]
     };
     const message = "";
@@ -31,7 +39,7 @@ export default function App() {
                     <div className="card-set">
                         {cards.cardSet.map(card =>
                             <div className="card-container">
-                                <Card />
+                                <Card card={card} />
                             </div>
                         )}
                     </div>
