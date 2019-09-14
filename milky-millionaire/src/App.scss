@@ -1,6 +1,14 @@
 .main {
     height: 100%;
 
+    .cpus {
+        display: flex;
+
+        .cpu {
+            flex: 1;
+        }
+    }
+
     .board {
         height: 100%;
         display: flex;

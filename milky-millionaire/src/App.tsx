@@ -1,50 +1,67 @@
 import React from 'react';
 import './App.scss';
-import CPU from './components/CPU';
+import CPUView from './components/CPUView';
 import CardView from './components/CardView';
 import Player from './components/PlayerView';
 import { GameStatus } from './models/Game';
 
 export default function App() {
 
+    const cards = [{
+        suit: "heart", rank: 1
+    }, {
+        suit: "diamond", rank: 2
+    }, {
+        suit: "club", rank: 13
+    }, {
+        joker: true
+    }] as const;
     const gameStatus = GameStatus.Playing;
-    const cpus = [{ name: "a" }, { name: "b" }, { name: "c" }, { name: "d" }];
+    const cpus = [{
+        name: "パクチー",
+        color: "#F189C8",
+        bgColor: "",
+        imageFileName: "vegetable_pakuchi_coriander.png",
+        cards: cards
+    }, {
+        name: "日本酒",
+        color: "#34BD67",
+        bgColor: "",
+        imageFileName: "masu_nihonsyu.png",
+        cards: cards
+    }, {
+        name: "餃子",
+        color: "#26C4F0",
+        bgColor: "",
+        imageFileName: "food_gyouza_mise.png",
+        cards: cards
+    }, {
+        name: "かまぼこ",
+        color: "#C97842",
+        bgColor: "",
+        imageFileName: "kamaboko_red.png",
+        cards: cards
+    }];
     const stack = {
         cards: [{
-            cardSet: [{
-                suit: "heart", rank: 1
-            }, {
-                suit: "diamond", rank: 2
-            }, {
-                suit: "club", rank: 13
-            }, {
-                joker: true
-            }] as const
+            cardSet: cards
         }]
     };
     const playerInfo = {
         rank: "平民",
-        deck: [{
-            suit: "heart", rank: 1
-        }, {
-            suit: "diamond", rank: 2
-        }, {
-            suit: "club", rank: 13
-        }, {
-            joker: true
-        }]
+        deck: cards
     } as const;
     const message = "";
 
     return (
         <div className="main">
             <div className="board">
-                <ul className="computers">
+                <ul className="cpus">
                     {cpus.map(cpu => {
                         // CPUを描画
                         return (
-                            <li>
-                                <CPU name={cpu.name} />
+                            <li className="cpu">
+                                <CPUView {...cpu} />
                             </li>
                         );
                     })}
