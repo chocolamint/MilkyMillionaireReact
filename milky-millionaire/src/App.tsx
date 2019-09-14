@@ -2,10 +2,12 @@ import React from 'react';
 import './App.scss';
 import CPU from './components/CPU';
 import CardView from './components/CardView';
-import Player from './components/Player';
+import Player from './components/PlayerView';
+import { GameStatus } from './models/Game';
 
 export default function App() {
 
+    const gameStatus = GameStatus.Playing;
     const cpus = [{ name: "a" }, { name: "b" }, { name: "c" }, { name: "d" }];
     const stack = {
         cards: [{
@@ -21,6 +23,7 @@ export default function App() {
         }]
     };
     const playerInfo = {
+        rank: "平民",
         deck: [{
             suit: "heart", rank: 1
         }, {
@@ -29,8 +32,8 @@ export default function App() {
             suit: "club", rank: 13
         }, {
             joker: true
-        }] as const
-    }
+        }]
+    } as const;
     const message = "";
 
     return (
@@ -57,7 +60,7 @@ export default function App() {
                         </div>
                     )}
                 </div >
-                <Player deck={playerInfo.deck} />
+                <Player {...playerInfo} gameStatus={gameStatus} />
             </div>
             {message &&
                 <div className="message">
