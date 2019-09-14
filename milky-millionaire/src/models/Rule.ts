@@ -2,7 +2,7 @@ import { Card } from "./Card";
 
 export const Rule = {
 
-    canDiscard(board: { stack: Card[][] }, cards: Card[]) {
+    canDiscard(board: { stack: Card[][] }, cards: readonly Card[]) {
 
         const [stackTop] = board.stack;
 

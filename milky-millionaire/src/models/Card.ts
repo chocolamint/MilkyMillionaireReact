@@ -19,6 +19,6 @@ export type Rank = typeof ranks[number];
 
 const joker: Card = { joker: true } as const;
 const extraJoker: Card = { joker: true, extra: true };
-const numberCards: Card[] = suits.flatMap(s => ranks.map(r => ({ suit: s, rank: r } as const)));
+const numberCards: Card[] = suits.reduce((acc, s) => acc.concat(ranks.map(r => ({ suit: s, rank: r } as const))), [] as Card[]);
 
 export const allCards: readonly Card[] = numberCards.concat([joker, extraJoker]);
