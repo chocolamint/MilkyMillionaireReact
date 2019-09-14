@@ -14,6 +14,15 @@ export interface GameState {
     playerDeck: Card[]
 }
 
+export type TurnResult = Discard | Pass;
+export interface Discard {
+    action: "discard",
+    cards: Card[]
+}
+export interface Pass {
+    action: "pass"
+}
+
 export function combination<T>(xs: ReadonlyArray<T>, k: number): T[][] {
 
     const temp = (xs: ReadonlyArray<T>, i: number, k: number): T[][] => {

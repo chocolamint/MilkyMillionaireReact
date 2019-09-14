@@ -9,13 +9,23 @@ export async function tickGame(state: GameState, random: Random): Promise<GameSt
                     // player
                     return state;
                 default:
-                    const { newDeck, discard } = await turnCPU(state, state.cpuDeck[state.currentTurn], random);
-                    return {
-                        ...state,
-                        currentTurn: state.currentTurn === 4 ? 0 : state.currentTurn + 1,
-                        stack: [discard, ...state.stack],
-                        cpuDeck: state.cpuDeck.map((x, i) => i === state.currentTurn ? newDeck : x),
-                    };
+                    const cpuDeck = state.cpuDeck[state.currentTurn];
+                    const result = turnCPU(state, cpuDeck, random);
+                    const nextTurn = state.currentTurn === 4 ? 0 : state.currentTurn + 1;
+                    if (result.action === "pass") {
+                        return {
+                            ...state,
+                            currentTurn: nextTurn
+                        };
+                    } else {
+                        const newDeck = cpuDeck.filter(x => !result.cards.includes(x));
+                        return {
+                            ...state,
+                            currentTurn: nextTurn,
+                            stack: [result.cards, ...state.stack],
+                            cpuDeck: state.cpuDeck.map((d, i) => i === state.currentTurn ? newDeck : d),
+                        };
+                    }
             }
         default:
             return state;

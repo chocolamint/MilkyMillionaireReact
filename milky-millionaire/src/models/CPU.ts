@@ -1,8 +1,8 @@
 import { Card } from "./Card";
-import { GameState, combination, Random } from "./Game";
+import { GameState, combination, Random, TurnResult } from "./Game";
 import { Rule } from "./Rule";
 
-export async function turnCPU(game: GameState, deck: Card[], random: Random) {
+export function turnCPU(game: GameState, deck: Card[], random: Random): TurnResult {
 
     const { stack } = game;
 
@@ -15,7 +15,15 @@ export async function turnCPU(game: GameState, deck: Card[], random: Random) {
     const discardables = combinations.filter(x => Rule.canDiscard({ stack }, x));
 
     const discard = discardables[random.next(discardables.length)];
-    const newDeck = deck.filter(x => !discard.includes(x));
 
-    return { newDeck, discard };
+    if (discard) {
+        return {
+            action: "discard",
+            cards: discard
+        };
+    } else {
+        return {
+            action: "pass"
+        };
+    }
 }
