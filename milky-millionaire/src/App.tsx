@@ -44,7 +44,11 @@ export default function App() {
     }];
     const stack = {
         cards: [{
-            cardSet: cards
+            cardSet: cards.slice(0, 2)
+        }, {
+            cardSet: cards.slice(2, 4)
+        }, {
+            cardSet: cards.slice(1, 3)
         }]
     };
     const playerInfo = {
