@@ -14,14 +14,13 @@ export interface GameState {
     playerDeck: Card[]
 }
 
-export function shuffle<T>(array: readonly T[], randomGen: RandomGenerator): [T[], RandomGenerator] {
+export function shuffle<T>(array: readonly T[], random: Random): T[] {
     const shuffled = array.slice();
     for (let i = shuffled.length - 1; i > 0; i--) {
-        const [j, rGen] = random(i + 1, randomGen);
-        randomGen = rGen;
+        const j = random.next(i + 1);
         [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
     }
-    return [shuffled, randomGen];
+    return shuffled;
 }
 
 export function deal(cards: Card[], length: number): Card[][] {
@@ -33,18 +32,33 @@ export function deal(cards: Card[], length: number): Card[][] {
     return r;
 }
 
-// https://sbfl.net/blog/2017/06/01/javascript-reproducible-random/
-export type RandomGenerator = [number, number, number, number];
-
-export function newRandomGenerator(seed: number = new Date().valueOf()): RandomGenerator {
-    return [123456789, 362436069, 521288629, seed];
+export interface Random {
+    next(max: number): number;
 }
+// https://sbfl.net/blog/2017/06/01/javascript-reproducible-random/
+export function newRandom(seed: number = new Date().valueOf()): Random {
 
-export function random(max: number, randomGen: RandomGenerator): [number, RandomGenerator] {
+    const generator = nextRandom(seed);
+    return {
+        next(max: number): number {
+            const next = generator.next();
+            if (next.done) throw new Error();
+            return next.value(max);
+        }
+    }
+
+    function* nextRandom(seed: number) {
+        let gen = [123456789, 362436069, 521288629, seed];
+        let num;
+        while (true) {
+            [num, gen] = nextDouble(gen);
+            const r = Math.abs(num);
+            yield (max: number) => r % max;
+        }
+    }
 
     // XorShift
-    function nextDouble(randomGen: RandomGenerator): [number, RandomGenerator] {
-        const [x, y, z, w] = randomGen;
+    function nextDouble([x, y, z, w]: number[]): [number, number[]] {
         const t = x ^ (x << 11);
         const newX = y;
         const newY = z;
@@ -52,8 +66,4 @@ export function random(max: number, randomGen: RandomGenerator): [number, Random
         const newW = (w ^ (w >>> 19)) ^ (t ^ (t >>> 8));
         return [newW, [newX, newY, newZ, newW]];
     }
-
-    const [num, newRandomGen] = nextDouble(randomGen);
-    const r = Math.abs(num);
-    return [r % max, newRandomGen];
 }
