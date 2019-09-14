@@ -14,6 +14,24 @@ export interface GameState {
     playerDeck: Card[]
 }
 
+export function combination<T>(xs: ReadonlyArray<T>, k: number): T[][] {
+
+    const temp = (xs: ReadonlyArray<T>, i: number, k: number): T[][] => {
+        if (k == 0) {
+            return xs.slice(i).map(x => [x]);
+        }
+        const ret = [];
+        for (let j = i; j < xs.length; j++) {
+            const ys = temp(xs, j + 1, k - 1);
+            for (const y of ys) {
+                ret.push([xs[j]].concat(y));
+            }
+        }
+        return ret;
+    };
+    return temp(xs, 0, k - 1);
+}
+
 export function shuffle<T>(array: readonly T[], random: Random): T[] {
     const shuffled = array.slice();
     for (let i = shuffled.length - 1; i > 0; i--) {

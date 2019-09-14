@@ -9,9 +9,10 @@ import { tickGame } from './models/App';
 
 export default function App(props: { random: Random }) {
 
-    const cards = shuffle(allCards, props.random);
-    const dealCards = shuffle(deal(cards, 5), props.random);
-    const currentTurn = props.random.next(5);
+    const { random } = props;
+    const cards = shuffle(allCards, random);
+    const dealCards = shuffle(deal(cards, 5), random);
+    const currentTurn = random.next(5);
 
     const [gameState, setGameState] = useState({
         gameStatus: GameStatus.Playing,
@@ -51,7 +52,7 @@ export default function App(props: { random: Random }) {
 
     useEffect(() => {
         (async () => {
-            const newState = await tickGame(gameState);
+            const newState = await tickGame(gameState, random);
             console.log(newState);
             setGameState(newState);
         })();
