@@ -26,12 +26,14 @@ export default function Player(props: PlayerProps) {
                     </div>
                 }
             </div>
-            <div className="name">
+            <div className="player-rank">
                 {props.rank}
             </div>
             <div className="deck">
                 {props.deck.map(card =>
-                    <CardView card={card} />
+                    <div className="card-container">
+                        <CardView card={card} />
+                    </div>
                 )}
             </div>
         </div>

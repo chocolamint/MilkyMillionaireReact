@@ -79,9 +79,46 @@
         }
     }
 
+    .player-rank {
+        font-weight: 900;
+        display: block;
+        position: relative;
+        text-align: center;
+        font-size: 6vw;
+        margin: 4vw 0;
+        font-family: "M+ 1p black";
+        text-shadow: 0.3vw 0.3vw #ffffff,
+            0vw 0.3vw #ffffff,
+            0.3vw 0vw #ffffff;
+
+        &.turn {
+            border-bottom-color: #cc1160;
+        }
+
+        &::after {
+            content: "";
+            display: block;
+            position: absolute;
+            z-index: -1;
+            top: -3vw;
+            width: 90%;
+            border-style: solid;
+            border-color: transparent;
+            border-bottom-color: #909090;
+            border-width: 5vw;
+
+        }
+    }
+
     .deck {
         display: flex;
         flex-direction: row;
-        justify-content: space-between;
+        flex-wrap: wrap;
+        padding: 1vw 4vw;
+
+        .card-container {
+            width: 10vw;
+            margin: 0 0.5vw;
+        }
     }
 }
