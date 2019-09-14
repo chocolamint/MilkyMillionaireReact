@@ -5,6 +5,7 @@ function canDiscard(board: { stack: Card[][] }, cards: readonly Card[]) {
     const [stackTop] = board.stack;
 
     if (cards.length == 0) return false;
+    if (cards.length >= 5) return false;
 
     let c: Card;
     if (cards.every(x => x.joker)) {

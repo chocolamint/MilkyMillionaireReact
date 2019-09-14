@@ -66,6 +66,26 @@ describe("Rule", () => {
                 expect(Rule.canDiscard(board, [card("spade", 2)])).toBe(true);
                 expect(Rule.canDiscard(board, [joker()])).toBe(true);
             });
+
+            it("should return false if rank is not unique.", () => {
+
+                const board = {
+                    stack: [],
+                };
+
+                expect(Rule.canDiscard(board, [card("spade", 3), card("club", 4)])).toBe(false);
+                expect(Rule.canDiscard(board, [card("spade", 3), card("club", 4), card("heart", 3)])).toBe(false);
+                expect(Rule.canDiscard(board, [card("spade", 3), card("club", 3), card("heart", 4), card("diamond", 3)])).toBe(false);
+            });
+
+            it("should return false if card is too many.", () => {
+
+                const board = {
+                    stack: [],
+                };
+
+                expect(Rule.canDiscard(board, [card("spade", 3), card("club", 3), card("heart", 3), card("diamond", 3), joker()])).toBe(false);
+            });
         });
 
         describe("Joker", () => {
