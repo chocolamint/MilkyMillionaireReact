@@ -9,6 +9,7 @@ export enum GameStatus {
 export interface GameState {
     gameStatus: GameStatus;
     cpuDeck: Card[][];
+    currentTurn: number;
     stack: Card[][];
     playerDeck: Card[]
 }

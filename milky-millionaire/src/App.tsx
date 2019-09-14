@@ -3,7 +3,7 @@ import './App.scss';
 import CPUView from './components/CPUView';
 import CardView from './components/CardView';
 import Player from './components/PlayerView';
-import { GameStatus, RandomGenerator, shuffle, deal } from './models/Game';
+import { GameStatus, RandomGenerator, shuffle, deal, random } from './models/Game';
 import { allCards, Card } from './models/Card';
 import { tickGame } from './models/App';
 
@@ -11,10 +11,12 @@ export default function App(props: { randomGen: RandomGenerator }) {
 
     const [cards, randomGen2] = shuffle(allCards, props.randomGen);
     const [dealCards, randomGen3] = shuffle(deal(cards, 5), randomGen2);
+    const [currentTurn, randomGen4] = random(5, randomGen3);
 
     const [gameState, setGameState] = useState({
         gameStatus: GameStatus.Playing,
         cpuDeck: dealCards.slice(0, 4),
+        currentTurn,
         stack: [] as Card[][],
         playerDeck: dealCards[4]
     });
@@ -50,6 +52,7 @@ export default function App(props: { randomGen: RandomGenerator }) {
     useEffect(() => {
         (async () => {
             const newState = await tickGame(gameState);
+            console.log(newState);
             setGameState(newState);
         })();
     });
