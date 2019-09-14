@@ -5,6 +5,7 @@ import CardView from './components/CardView';
 import Player from './components/PlayerView';
 import { GameStatus, RandomGenerator, shuffle, deal } from './models/Game';
 import { allCards, Card } from './models/Card';
+import { tickGame } from './models/App';
 
 export default function App(props: { randomGen: RandomGenerator }) {
 
@@ -45,12 +46,19 @@ export default function App(props: { randomGen: RandomGenerator }) {
     const message = "";
 
     useEffect(() => {
-        const timer = setTimeout(() => {
-
-            setCPUDeck([cpuDeck[0].slice(0, 7)].concat(cpuDeck.slice(1, 4)));
-
-        }, 4000);
-        return () => clearTimeout(timer);
+        tickGame({
+            gameStatus,
+            cpuDeck,
+            stack,
+            playerDeck
+        }).then(state => {
+            setGameStatus(state.gameStatus);
+            setCPUDeck(state.cpuDeck);
+            setStack(state.stack);
+            setPlayerDeck(state.playerDeck);
+        }).catch((e: Error) => {
+            console.error(e);
+        });
     });
 
     return (
