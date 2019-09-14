@@ -1,3 +1,9 @@
+import { Card } from "./Card";
+
+export interface GameInfo {
+    stack: Card[][]
+}
+
 export enum GameStatus {
     Playing,
     GameSet,
@@ -12,6 +18,15 @@ export function shuffle<T>(array: readonly T[], randomGen: RandomGenerator): [T[
         [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
     }
     return [shuffled, randomGen];
+}
+
+export function deal(cards: Card[], length: number): Card[][] {
+    const r: Card[][] = [...Array(length)].map(_ => []);
+    let i = 0;
+    for (const card of cards) {
+        r[i++ % length].push(card);
+    }
+    return r;
 }
 
 // https://sbfl.net/blog/2017/06/01/javascript-reproducible-random/
