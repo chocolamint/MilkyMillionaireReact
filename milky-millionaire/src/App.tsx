@@ -1,5 +1,5 @@
 import React from 'react';
-import './App.css';
+import './App.scss';
 import Player from './components/Player';
 import CPU from './components/CPU';
 import Card from './components/Card';
