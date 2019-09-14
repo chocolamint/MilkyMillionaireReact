@@ -1,20 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.scss';
 import CPUView from './components/CPUView';
 import CardView from './components/CardView';
 import Player from './components/PlayerView';
 import { GameStatus, RandomGenerator, shuffle, deal } from './models/Game';
-import { allCards } from './models/Card';
+import { allCards, Card } from './models/Card';
 
 export default function App(props: { randomGen: RandomGenerator }) {
 
     const [cards, randomGen2] = shuffle(allCards, props.randomGen);
     const [dealCards, randomGen3] = shuffle(deal(cards, 5), randomGen2);
 
-    const [cpuCards, setCPUCards] = useState(dealCards.slice(0, 4));
+    const [gameStatus, setGameStatus] = useState(GameStatus.Playing);
+    const [cpuDeck, setCPUDeck] = useState(dealCards.slice(0, 4));
+    const [stack, setStack] = useState([] as Card[][]);
+    const [playerDeck, setPlayerDeck] = useState(dealCards[4]);
 
     const gameInfo = {
-        gameStatus: GameStatus.Playing,
         cpus: [{
             name: "パクチー",
             color: "#F189C8",
@@ -36,13 +38,20 @@ export default function App(props: { randomGen: RandomGenerator }) {
             bgColor: "",
             imageFileName: "kamaboko_red.png"
         }],
-        stack: [cards.slice(0, 3)],
         player: {
             rank: "平民" as const,
-            deck: cards.slice(44)
-        }
+        },
     };
     const message = "";
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+
+            setCPUDeck([cpuDeck[0].slice(0, 7)].concat(cpuDeck.slice(1, 4)));
+
+        }, 4000);
+        return () => clearTimeout(timer);
+    });
 
     return (
         <div className="main">
@@ -52,13 +61,13 @@ export default function App(props: { randomGen: RandomGenerator }) {
                         // CPUを描画
                         return (
                             <li className="cpu">
-                                <CPUView {...cpu} cards={cpuCards[i]} />
+                                <CPUView {...cpu} cards={cpuDeck[i]} />
                             </li>
                         );
                     })}
                 </ul >
                 <div className="discard">
-                    {gameInfo.stack.map(cards =>
+                    {stack.map(cards =>
                         <div className="card-set">
                             {cards.map(card =>
                                 <div className="card-container">
@@ -68,7 +77,7 @@ export default function App(props: { randomGen: RandomGenerator }) {
                         </div>
                     )}
                 </div >
-                <Player {...gameInfo.player} gameStatus={gameInfo.gameStatus} />
+                <Player {...gameInfo.player} deck={playerDeck} gameStatus={gameStatus} />
             </div>
             {message &&
                 <div className="message">

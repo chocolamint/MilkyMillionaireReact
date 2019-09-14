@@ -1,13 +1,16 @@
 import { Card } from "./Card";
 
-export interface GameInfo {
-    stack: Card[][]
-}
-
 export enum GameStatus {
     Playing,
     GameSet,
     Trading
+}
+
+export interface GameState {
+    gameStatus: GameStatus;
+    cpuDeck: Card[][];
+    stack: Card[][];
+    playerDeck: Card[]
 }
 
 export function shuffle<T>(array: readonly T[], randomGen: RandomGenerator): [T[], RandomGenerator] {
