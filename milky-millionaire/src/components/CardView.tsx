@@ -1,11 +1,12 @@
 import React from "react";
+import './CardView.scss';
 import { Card } from "../models/Card";
 
-export interface CardProps {
+export interface CardViewProps {
     card: Card;
 }
 
-export default function (props: CardProps) {
+export default function (props: CardViewProps) {
 
     const { card } = props;
     const classes = ["card", card.joker ? "joker" : card.suit];
