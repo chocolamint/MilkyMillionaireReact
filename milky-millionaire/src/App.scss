@@ -1,0 +1,49 @@
+.main {
+    height: 100%;
+
+    .cpus {
+        display: flex;
+
+        .cpu {
+            flex: 1;
+        }
+    }
+
+    .board {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+
+        .computers {
+            flex: 1;
+        }
+
+        .discard {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+
+            .card-set {
+                display: none;
+
+                &:nth-child(1),
+                &:nth-child(2) {
+                    display: flex;
+                }
+
+                flex-direction: row;
+                justify-content: center;
+
+                .card-container {
+                    width: 10vw;
+                }
+            }
+        }
+
+        .player {
+            flex: 1;
+        }
+    }
+}
