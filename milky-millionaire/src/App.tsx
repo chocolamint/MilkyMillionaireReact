@@ -1,79 +1,80 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.scss';
 import CPUView from './components/CPUView';
 import CardView from './components/CardView';
 import Player from './components/PlayerView';
-import { GameStatus } from './models/Game';
+import { GameStatus, Random, shuffle, deal } from './models/Game';
+import { allCards, Card } from './models/Card';
+import { tickGame } from './models/App';
 
-export default function App() {
+export default function App(props: { random: Random }) {
 
-    const cards = [{
-        suit: "heart", rank: 1
-    }, {
-        suit: "diamond", rank: 2
-    }, {
-        suit: "club", rank: 13
-    }, {
-        joker: true
-    }] as const;
-    const gameStatus = GameStatus.Playing;
-    const cpus = [{
-        name: "パクチー",
-        color: "#F189C8",
-        bgColor: "",
-        imageFileName: "vegetable_pakuchi_coriander.png",
-        cards: cards
-    }, {
-        name: "日本酒",
-        color: "#34BD67",
-        bgColor: "",
-        imageFileName: "masu_nihonsyu.png",
-        cards: cards
-    }, {
-        name: "餃子",
-        color: "#26C4F0",
-        bgColor: "",
-        imageFileName: "food_gyouza_mise.png",
-        cards: cards
-    }, {
-        name: "かまぼこ",
-        color: "#C97842",
-        bgColor: "",
-        imageFileName: "kamaboko_red.png",
-        cards: cards
-    }];
-    const stack = {
-        cards: [{
-            cardSet: cards.slice(0, 2)
+    const { random } = props;
+    const cards = shuffle(allCards, random);
+    const dealCards = shuffle(deal(cards, 5), random);
+    const currentTurn = random.next(5);
+
+    const [gameState, setGameState] = useState({
+        gameStatus: GameStatus.Playing,
+        cpuDeck: dealCards.slice(0, 4),
+        currentTurn,
+        stack: [] as Card[][],
+        playerDeck: dealCards[4]
+    });
+
+    const gameInfo = {
+        cpus: [{
+            name: "パクチー",
+            color: "#F189C8",
+            bgColor: "",
+            imageFileName: "vegetable_pakuchi_coriander.png"
         }, {
-            cardSet: cards.slice(2, 4)
+            name: "日本酒",
+            color: "#34BD67",
+            bgColor: "",
+            imageFileName: "masu_nihonsyu.png"
         }, {
-            cardSet: cards.slice(1, 3)
-        }]
+            name: "餃子",
+            color: "#26C4F0",
+            bgColor: "",
+            imageFileName: "food_gyouza_mise.png"
+        }, {
+            name: "かまぼこ",
+            color: "#C97842",
+            bgColor: "",
+            imageFileName: "kamaboko_red.png"
+        }],
+        player: {
+            rank: "平民" as const,
+        },
     };
-    const playerInfo = {
-        rank: "平民",
-        deck: cards
-    } as const;
     const message = "";
+
+    useEffect(() => {
+        (async () => {
+            const newState = await tickGame(gameState, random);
+            console.log(newState);
+            setGameState(newState);
+        })();
+    });
 
     return (
         <div className="main">
             <div className="board">
                 <ul className="cpus">
-                    {cpus.map(cpu => {
+                    {gameInfo.cpus.map((cpu, i) => {
                         // CPUを描画
                         return (
                             <li className="cpu">
-                                <CPUView {...cpu} />
+                                <CPUView {...cpu} cards={gameState.cpuDeck[i]} />
                             </li>
                         );
                     })}
                 </ul >
                 <div className="discard">
-                    {stack.cards.map(cards =>
+                    {gameState.stack.map(cards =>
                         <div className="card-set">
-                            {cards.cardSet.map(card =>
+                            {cards.map(card =>
                                 <div className="card-container">
                                     <CardView card={card} />
                                 </div>
@@ -81,7 +82,7 @@ export default function App() {
                         </div>
                     )}
                 </div >
-                <Player {...playerInfo} gameStatus={gameStatus} />
+                <Player {...gameInfo.player} deck={gameState.playerDeck} gameStatus={gameState.gameStatus} />
             </div>
             {message &&
                 <div className="message">
