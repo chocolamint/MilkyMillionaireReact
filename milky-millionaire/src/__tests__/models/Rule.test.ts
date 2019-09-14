@@ -1,6 +1,5 @@
 import { Rule } from "../../models/Rule";
-import { allCards, NumberCard, Card, Suit, Rank } from "../../models/Card";
-import { GameState } from "../../models/Game";
+import { Card, Suit, Rank } from "../../models/Card";
 
 describe("Rule", () => {
 
