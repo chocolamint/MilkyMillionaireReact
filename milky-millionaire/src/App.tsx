@@ -12,10 +12,12 @@ export default function App(props: { randomGen: RandomGenerator }) {
     const [cards, randomGen2] = shuffle(allCards, props.randomGen);
     const [dealCards, randomGen3] = shuffle(deal(cards, 5), randomGen2);
 
-    const [gameStatus, setGameStatus] = useState(GameStatus.Playing);
-    const [cpuDeck, setCPUDeck] = useState(dealCards.slice(0, 4));
-    const [stack, setStack] = useState([] as Card[][]);
-    const [playerDeck, setPlayerDeck] = useState(dealCards[4]);
+    const [gameState, setGameState] = useState({
+        gameStatus: GameStatus.Playing,
+        cpuDeck: dealCards.slice(0, 4),
+        stack: [] as Card[][],
+        playerDeck: dealCards[4]
+    });
 
     const gameInfo = {
         cpus: [{
@@ -46,19 +48,10 @@ export default function App(props: { randomGen: RandomGenerator }) {
     const message = "";
 
     useEffect(() => {
-        tickGame({
-            gameStatus,
-            cpuDeck,
-            stack,
-            playerDeck
-        }).then(state => {
-            setGameStatus(state.gameStatus);
-            setCPUDeck(state.cpuDeck);
-            setStack(state.stack);
-            setPlayerDeck(state.playerDeck);
-        }).catch((e: Error) => {
-            console.error(e);
-        });
+        (async () => {
+            const newState = await tickGame(gameState);
+            setGameState(newState);
+        })();
     });
 
     return (
@@ -69,13 +62,13 @@ export default function App(props: { randomGen: RandomGenerator }) {
                         // CPUを描画
                         return (
                             <li className="cpu">
-                                <CPUView {...cpu} cards={cpuDeck[i]} />
+                                <CPUView {...cpu} cards={gameState.cpuDeck[i]} />
                             </li>
                         );
                     })}
                 </ul >
                 <div className="discard">
-                    {stack.map(cards =>
+                    {gameState.stack.map(cards =>
                         <div className="card-set">
                             {cards.map(card =>
                                 <div className="card-container">
@@ -85,7 +78,7 @@ export default function App(props: { randomGen: RandomGenerator }) {
                         </div>
                     )}
                 </div >
-                <Player {...gameInfo.player} deck={playerDeck} gameStatus={gameStatus} />
+                <Player {...gameInfo.player} deck={gameState.playerDeck} gameStatus={gameState.gameStatus} />
             </div>
             {message &&
                 <div className="message">
