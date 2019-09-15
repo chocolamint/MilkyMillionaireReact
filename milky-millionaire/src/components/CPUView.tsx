@@ -3,6 +3,7 @@ import "./CPUView.scss";
 import { Card } from "../models/Card";
 import { GameState, Random, TurnResult } from "../models/Game";
 import { turnCPU } from "../models/CPU";
+import { cancellation, sleep } from "../AsyncHelper";
 
 export interface CPUProps {
     imageFileName: any;
@@ -20,9 +21,13 @@ export default function CPU(props: CPUProps) {
 
     useEffect(() => {
         if (props.isMyTurn) {
-            const result = turnCPU(props.stackTop, props.cards, props.random);
-            const timer = setTimeout(() => props.onTurnEnd(result), 500);
-            return () => clearTimeout(timer);
+            const [source, token] = cancellation();
+            (async () => {
+                const result = turnCPU(props.stackTop, props.cards, props.random);
+                await sleep(500, token);
+                props.onTurnEnd(result);
+            })();
+            return () => source.cancel();
         }
     });
 
