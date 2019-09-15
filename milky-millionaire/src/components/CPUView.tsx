@@ -1,16 +1,31 @@
-import React from "react";
+import React, { useEffect } from "react";
 import "./CPUView.scss";
 import { Card } from "../models/Card";
+import { GameState, Random, TurnResult } from "../models/Game";
+import { turnCPU } from "../models/CPU";
 
 export interface CPUProps {
     imageFileName: any;
     bgColor: string | undefined;
     color: string | undefined;
     name: string;
-    cards: readonly Card[]
+    isMyTurn: boolean;
+    cards: readonly Card[];
+    stackTop: Card[] | undefined;
+    random: Random;
+    onTurnEnd: (result: TurnResult) => void;
 }
 
 export default function CPU(props: CPUProps) {
+
+    useEffect(() => {
+        if (props.isMyTurn) {
+            const result = turnCPU(props.stackTop, props.cards, props.random);
+            const timer = setTimeout(() => props.onTurnEnd(result), 500);
+            return () => clearTimeout(timer);
+        }
+    });
+
     return (
         <div className="cpu">
             <div className="name">

@@ -3,9 +3,8 @@ import './App.scss';
 import CPUView from './components/CPUView';
 import CardView from './components/CardView';
 import Player from './components/PlayerView';
-import { GameStatus, Random, shuffle, deal } from './models/Game';
+import { GameStatus, Random, shuffle, deal, TurnResult } from './models/Game';
 import { allCards, Card } from './models/Card';
-import { tickGame } from './models/App';
 
 export default function App(props: { random: Random }) {
 
@@ -50,14 +49,6 @@ export default function App(props: { random: Random }) {
     };
     const message = "";
 
-    useEffect(() => {
-        (async () => {
-            const newState = await tickGame(gameState, random);
-            console.log(newState);
-            setGameState(newState);
-        })();
-    });
-
     return (
         <div className="main">
             <div className="board">
@@ -66,7 +57,12 @@ export default function App(props: { random: Random }) {
                         // CPUを描画
                         return (
                             <li className="cpu">
-                                <CPUView {...cpu} cards={gameState.cpuDeck[i]} />
+                                <CPUView {...cpu}
+                                    isMyTurn={i === gameState.currentTurn}
+                                    cards={gameState.cpuDeck[i]}
+                                    stackTop={gameState.stack[0]}
+                                    random={random}
+                                    onTurnEnd={handleTurnEnd} />
                             </li>
                         );
                     })}
@@ -93,4 +89,23 @@ export default function App(props: { random: Random }) {
             }
         </div>
     );
+
+    function handleTurnEnd(result: TurnResult) {
+        const cpuDeck = gameState.cpuDeck[gameState.currentTurn];
+        const nextTurn = gameState.currentTurn === 4 ? 0 : gameState.currentTurn + 1;
+        if (result.action === "pass") {
+            setGameState({
+                ...gameState,
+                currentTurn: nextTurn
+            });
+        } else {
+            const newDeck = cpuDeck.filter(x => !result.cards.includes(x));
+            setGameState({
+                ...gameState,
+                currentTurn: nextTurn,
+                stack: [result.cards, ...gameState.stack],
+                cpuDeck: gameState.cpuDeck.map((d, i) => i === gameState.currentTurn ? newDeck : d),
+            });
+        }
+    }
 }

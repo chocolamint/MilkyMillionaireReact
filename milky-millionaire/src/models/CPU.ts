@@ -2,9 +2,7 @@ import { Card } from "./Card";
 import { GameState, combination, Random, TurnResult } from "./Game";
 import { Rule } from "./Rule";
 
-export function turnCPU(game: GameState, deck: Card[], random: Random): TurnResult {
-
-    const { stack } = game;
+export function turnCPU(stackTop: readonly Card[] | undefined, deck: readonly Card[], random: Random): TurnResult {
 
     const combinations = [
         ...combination(deck, 1),
@@ -12,7 +10,7 @@ export function turnCPU(game: GameState, deck: Card[], random: Random): TurnResu
         ...combination(deck, 3),
         ...combination(deck, 4),
     ];
-    const discardables = combinations.filter(x => Rule.canDiscard({ stack }, x));
+    const discardables = combinations.filter(x => Rule.canDiscard(stackTop, x));
 
     const discard = discardables[random.next(discardables.length)];
 
