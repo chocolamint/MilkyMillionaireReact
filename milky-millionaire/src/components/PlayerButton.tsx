@@ -1,4 +1,4 @@
-import React, { ReactNode, EventHandler } from "react";
+import React, { ReactNode } from "react";
 import "./PlayerButton.scss";
 
 interface PlayerButtonProps {

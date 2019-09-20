@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "./CPUView.scss";
-import { Card } from "../models/Card";
+import { Card, cardToString } from "../models/Card";
 import { Random, TurnResult } from "../models/Game";
 import { turnCPU } from "../models/CPU";
 
@@ -43,7 +43,7 @@ export default function CPU(props: CPUProps) {
             </div>
             <div className="cards" data-card-count={props.cards.length}>
                 {props.cards.map(x =>
-                    <div className="card"></div>
+                    <div className="card" key={`cpu-card-${cardToString(x)}`}></div>
                 )}
             </div>
         </div>

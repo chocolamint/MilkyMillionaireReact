@@ -22,3 +22,8 @@ const extraJoker: Card = { joker: true, extra: true };
 const numberCards: Card[] = suits.reduce((acc, s) => acc.concat(ranks.map(r => ({ suit: s, rank: r } as const))), [] as Card[]);
 
 export const allCards: readonly Card[] = numberCards.concat([joker, extraJoker]);
+
+export function cardToString(card: Card) {
+    return card.joker ? (card.extra ? "joker-e" : "joker") :
+        `${card.suit}-${card.rank}`;
+}
