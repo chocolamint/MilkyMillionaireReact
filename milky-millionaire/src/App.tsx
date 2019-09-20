@@ -74,7 +74,7 @@ export default function App(props: { random: Random }) {
                     })}
                 </ul>
                 <div className="board">
-                    <div className="discard">
+                    <div className="discarded">
                         {gameState.stack.map(cards =>
                             <div className="card-set">
                                 {cards.map(card =>
