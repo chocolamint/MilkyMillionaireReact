@@ -20,6 +20,8 @@ export default function App(props: { random: Random }) {
         stack: [] as Card[][],
         playerDeck: dealCards[4]
     });
+    const [discardings, setDiscardings] = useState(undefined as Card[] | undefined);
+    const [processing, setProcessing] = useState(false);
 
     const gameInfo = {
         cpus: [{
@@ -58,7 +60,7 @@ export default function App(props: { random: Random }) {
                         return (
                             <li className="cpu">
                                 <CPUView {...cpu}
-                                    isMyTurn={i === gameState.currentTurn}
+                                    isMyTurn={i === gameState.currentTurn && !processing}
                                     position={i}
                                     cards={gameState.cpuDeck[i]}
                                     stackTop={gameState.stack[0]}
@@ -67,7 +69,7 @@ export default function App(props: { random: Random }) {
                             </li>
                         );
                     })}
-                </ul >
+                </ul>
                 <div className="discard">
                     {gameState.stack.map(cards =>
                         <div className="card-set">
@@ -79,6 +81,14 @@ export default function App(props: { random: Random }) {
                         </div>
                     )}
                 </div >
+                {discardings &&
+                    <div className="discardings" onAnimationEnd={handleAnimationEnd}>
+                        {discardings.map(card =>
+                            <div className="card-container">
+                                <CardView card={card} />
+                            </div>
+                        )}
+                    </div>}
                 <Player {...gameInfo.player} deck={gameState.playerDeck} gameStatus={gameState.gameStatus} />
             </div>
             {message &&
@@ -104,9 +114,20 @@ export default function App(props: { random: Random }) {
             setGameState({
                 ...gameState,
                 currentTurn: nextTurn,
-                stack: [result.discards, ...gameState.stack],
+                stack: gameState.stack,
                 cpuDeck: gameState.cpuDeck.map((d, i) => i === gameState.currentTurn ? newDeck : d),
             });
+            setDiscardings(result.discards);
+            setProcessing(true);
         }
+    }
+
+    function handleAnimationEnd() {
+        setGameState({
+            ...gameState,
+            stack: [discardings!, ...gameState.stack],
+        });
+        setDiscardings(undefined);
+        setProcessing(false);
     }
 }

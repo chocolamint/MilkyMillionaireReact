@@ -54,6 +54,17 @@
             }
         }
 
+        .discardings {
+
+            animation: test 1s;
+
+            .card-container {
+                width: 10vw;
+            }
+        }
+
+        @keyframes test {}
+
         .player {
             flex: 1;
         }

@@ -1,9 +1,8 @@
-import React, { useState } from "react";
+import React from "react";
 import "./CPUView.scss";
 import { Card } from "../models/Card";
 import { Random, TurnResult } from "../models/Game";
 import { turnCPU } from "../models/CPU";
-import CardView from "./CardView";
 
 export interface CPUProps {
     imageFileName: any;
@@ -19,33 +18,13 @@ export interface CPUProps {
 }
 
 const waiting = { action: "waiting" } as const;
-type TurnState = TurnResult | typeof waiting;
 
 export default function CPU(props: CPUProps) {
 
-    const [myState, setMyState] = useState(waiting as TurnState);
-
-    if (props.isMyTurn && myState.action === "waiting") {
-        setMyState(
-            turnCPU(props.stackTop, props.cards, props.random)
-        );
+    if (props.isMyTurn) {
+        const result = turnCPU(props.stackTop, props.cards, props.random);
+        props.onTurnEnd(result);
     }
-
-    const isDiscarding = (card: Card) => {
-        if (myState && myState.action === "discard") {
-            return myState.discards.includes(card);
-        }
-        return false;
-    };
-
-    const hand = props.cards.filter(x => !isDiscarding(x));
-
-    const handleAnimationEnd = () => {
-        if (myState.action !== "waiting") {
-            props.onTurnEnd(myState);
-            setMyState(waiting);
-        }
-    };
 
     return (
         <div className={`cpu position-${props.position}`}>
@@ -55,18 +34,11 @@ export default function CPU(props: CPUProps) {
             <div className="image" style={{ borderColor: props.color, backgroundColor: props.bgColor }}>
                 <img src={`/assets/images/${props.imageFileName}`} alt="" />
             </div>
-            <div className="cards" data-card-count={hand.length}>
-                {hand.map(x =>
+            <div className="cards" data-card-count={props.cards.length}>
+                {props.cards.map(x =>
                     <div className="card"></div>
                 )}
             </div>
-            {myState && myState.action === "discard" &&
-                <div className="discarding" onAnimationEnd={handleAnimationEnd}>
-                    {myState.discards.map(card => (
-                        <CardView card={card} />
-                    ))}
-                </div>
-            }
         </div>
     );
 }

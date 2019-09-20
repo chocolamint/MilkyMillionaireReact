@@ -2,6 +2,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    position: relative;
 
     .name {
         text-align: center;
@@ -67,71 +68,6 @@
             display: inline-block;
             position: relative;
             box-sizing: border-box;
-        }
-    }
-
-    .discarding {
-        display: flex;
-        flex-direction: row;
-
-        .card {
-            width: 10vw;
-        }
-    }
-
-    &.position-0 .discarding {
-        animation: cpu-discarding-0 1000ms;
-    }
-
-    &.position-1 .discarding {
-        animation: cpu-discarding-1 1000ms;
-    }
-
-    &.position-2 .discarding {
-        animation: cpu-discarding-2 1000ms;
-    }
-
-    &.position-3 .discarding {
-        animation: cpu-discarding-3 1000ms;
-    }
-
-    @keyframes cpu-discarding-0 {
-        from {
-            transform: translate(-5vw, -10vw);
-        }
-
-        to {
-            transform: translate(12vw, 42vw);
-        }
-    }
-
-    @keyframes cpu-discarding-1 {
-        from {
-            transform: translate(-5vw, -10vw);
-        }
-
-        to {
-            transform: translate(12vw, 42vw);
-        }
-    }
-
-    @keyframes cpu-discarding-2 {
-        from {
-            transform: translate(5vw, -10vw);
-        }
-
-        to {
-            transform: translate(-12vw, 42vw);
-        }
-    }
-
-    @keyframes cpu-discarding-3 {
-        from {
-            transform: translate(5vw, -10vw);
-        }
-
-        to {
-            transform: translate(-20vw, 40vw);
         }
     }
 }
