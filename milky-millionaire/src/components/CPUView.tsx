@@ -21,9 +21,9 @@ export interface CPUProps {
 
 export default function CPU(props: CPUProps) {
 
-    const [turn, setTurn] = useState(undefined as TurnResult | undefined);
+    const [turn, setTurn] = useState({ action: "waiting" } as TurnResult | { action: "waiting" });
 
-    if (props.isMyTurn && turn === undefined) {
+    if (props.isMyTurn && turn.action === "waiting") {
         setTurn(
             turnCPU(props.stackTop, props.cards, props.random)
         );
@@ -37,9 +37,9 @@ export default function CPU(props: CPUProps) {
     };
 
     const handleAnimationEnd = () => {
-        if (turn !== undefined) {
+        if (turn.action !== "waiting") {
             props.onTurnEnd(turn);
-            setTurn(undefined);
+            setTurn({ action: "waiting" });
         }
     };
 
