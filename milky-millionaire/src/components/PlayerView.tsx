@@ -44,7 +44,7 @@ export default function Player(props: Readonly<PlayerProps>) {
                     return (
                         <div className={classNames.join(" ")}>
                             <CardView card={card}
-                                disabled={props.isMyTurn && !canStage(card)}
+                                disabled={props.isMyTurn && !canToggle(card)}
                                 onClick={handleCardClick}
                             />
                         </div>
@@ -53,6 +53,10 @@ export default function Player(props: Readonly<PlayerProps>) {
             </div>
         </div>
     );
+
+    function canToggle(card: Card) {
+        return stagings.includes(card) ? true : canStage(card);
+    }
 
     function canStage(card: Card) {
         return Rule.canDiscard(props.stackTop, stagings.concat([card]));
