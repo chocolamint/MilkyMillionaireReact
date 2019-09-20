@@ -1,9 +1,10 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import "./CPUView.scss";
 import { Card } from "../models/Card";
-import { GameState, Random, TurnResult } from "../models/Game";
+import { Random, TurnResult } from "../models/Game";
 import { turnCPU } from "../models/CPU";
 import { cancellation, sleep } from "../AsyncHelper";
+import CardView from "./CardView";
 
 export interface CPUProps {
     imageFileName: any;
@@ -19,15 +20,22 @@ export interface CPUProps {
 
 export default function CPU(props: CPUProps) {
 
+    const [turnResult, setTurnResult] = useState(undefined as TurnResult | undefined);
+
     useEffect(() => {
         if (props.isMyTurn) {
-            const [source, token] = cancellation();
-            (async () => {
+            if (turnResult === undefined) {
                 const result = turnCPU(props.stackTop, props.cards, props.random);
-                await sleep(500, token);
-                props.onTurnEnd(result);
-            })();
-            return () => source.cancel();
+                setTurnResult(result);
+            } else {
+                const [source, token] = cancellation();
+                (async () => {
+                    await sleep(500, token);
+                    props.onTurnEnd(turnResult);
+                    setTurnResult(undefined);
+                })();
+                return () => source.cancel();
+            }
         }
     });
 
@@ -44,6 +52,13 @@ export default function CPU(props: CPUProps) {
                     <div className="card"></div>
                 )}
             </div>
-        </div >
+            {turnResult && turnResult.action === "discard" &&
+                <div className="discarding">
+                    {turnResult.cards.map(card => (
+                        <CardView card={card} />
+                    ))}
+                </div>
+            }
+        </div>
     );
 }
