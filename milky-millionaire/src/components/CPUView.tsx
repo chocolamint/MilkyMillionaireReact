@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import "./CPUView.scss";
 import { Card } from "../models/Card";
 import { Random, TurnResult } from "../models/Game";
 import { turnCPU } from "../models/CPU";
-import { cancellation, sleep } from "../AsyncHelper";
 import CardView from "./CardView";
 
 export interface CPUProps {
@@ -19,31 +18,34 @@ export interface CPUProps {
     onTurnEnd: (result: TurnResult) => void;
 }
 
+const waiting = { action: "waiting" } as const;
+type TurnState = TurnResult | typeof waiting;
+
 export default function CPU(props: CPUProps) {
 
-    const [turn, setTurn] = useState({ action: "waiting" } as TurnResult | { action: "waiting" });
+    const [myState, setMyState] = useState(waiting as TurnState);
 
-    if (props.isMyTurn && turn.action === "waiting") {
-        setTurn(
+    if (props.isMyTurn && myState.action === "waiting") {
+        setMyState(
             turnCPU(props.stackTop, props.cards, props.random)
         );
     }
 
     const isDiscarding = (card: Card) => {
-        if (turn && turn.action === "discard") {
-            return turn.discards.includes(card);
+        if (myState && myState.action === "discard") {
+            return myState.discards.includes(card);
         }
         return false;
     };
 
+    const hand = props.cards.filter(x => !isDiscarding(x));
+
     const handleAnimationEnd = () => {
-        if (turn.action !== "waiting") {
-            props.onTurnEnd(turn);
-            setTurn({ action: "waiting" });
+        if (myState.action !== "waiting") {
+            props.onTurnEnd(myState);
+            setMyState(waiting);
         }
     };
-
-    const hand = props.cards.filter(x => !isDiscarding(x));
 
     return (
         <div className={`cpu position-${props.position}`}>
@@ -58,9 +60,9 @@ export default function CPU(props: CPUProps) {
                     <div className="card"></div>
                 )}
             </div>
-            {turn && turn.action === "discard" &&
+            {myState && myState.action === "discard" &&
                 <div className="discarding" onAnimationEnd={handleAnimationEnd}>
-                    {turn.discards.map(card => (
+                    {myState.discards.map(card => (
                         <CardView card={card} />
                     ))}
                 </div>
