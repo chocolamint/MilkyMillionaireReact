@@ -1,16 +1,28 @@
 import React from "react";
 import "./CPUView.scss";
 import { Card } from "../models/Card";
+import { Random, TurnResult } from "../models/Game";
+import { turnCPU } from "../models/CPU";
 
 export interface CPUProps {
     imageFileName: any;
     bgColor: string | undefined;
     color: string | undefined;
     name: string;
-    cards: readonly Card[]
+    isMyTurn: boolean;
+    cards: readonly Card[];
+    stackTop: Card[] | undefined;
+    random: Random;
+    onTurnEnd: (result: TurnResult) => void;
 }
 
 export default function CPU(props: CPUProps) {
+
+    if (props.isMyTurn) {
+        const result = turnCPU(props.stackTop, props.cards, props.random);
+        props.onTurnEnd(result);
+    }
+
     return (
         <div className="cpu">
             <div className="name">
@@ -24,6 +36,6 @@ export default function CPU(props: CPUProps) {
                     <div className="card"></div>
                 )}
             </div>
-        </div >
+        </div>
     );
 }

@@ -1,11 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import './App.scss';
 import CPUView from './components/CPUView';
 import CardView from './components/CardView';
 import Player from './components/PlayerView';
-import { GameStatus, Random, shuffle, deal } from './models/Game';
+import { GameStatus, Random, shuffle, deal, TurnResult } from './models/Game';
 import { allCards, Card } from './models/Card';
-import { tickGame } from './models/App';
+
+interface DiscardedCards {
+    by: number;
+    cards: Card[];
+}
 
 export default function App(props: { random: Random }) {
 
@@ -21,6 +25,7 @@ export default function App(props: { random: Random }) {
         stack: [] as Card[][],
         playerDeck: dealCards[4]
     });
+    const [discarding, setDiscarding] = useState(undefined as DiscardedCards | undefined);
 
     const gameInfo = {
         cpus: [{
@@ -50,38 +55,47 @@ export default function App(props: { random: Random }) {
     };
     const message = "";
 
-    useEffect(() => {
-        (async () => {
-            const newState = await tickGame(gameState, random);
-            console.log(newState);
-            setGameState(newState);
-        })();
-    });
-
     return (
         <div className="main">
-            <div className="board">
+            <div className="game">
                 <ul className="cpus">
                     {gameInfo.cpus.map((cpu, i) => {
-                        // CPUを描画
                         return (
                             <li className="cpu">
-                                <CPUView {...cpu} cards={gameState.cpuDeck[i]} />
+                                <CPUView {...cpu}
+                                    isMyTurn={i === gameState.currentTurn && discarding === undefined}
+                                    cards={gameState.cpuDeck[i]}
+                                    stackTop={gameState.stack[0]}
+                                    random={random}
+                                    onTurnEnd={handleTurnEnd} />
                             </li>
                         );
                     })}
-                </ul >
-                <div className="discard">
-                    {gameState.stack.map(cards =>
-                        <div className="card-set">
-                            {cards.map(card =>
-                                <div className="card-container">
-                                    <CardView card={card} />
-                                </div>
-                            )}
+                </ul>
+                <div className="board">
+                    <div className="discarded">
+                        {gameState.stack.map(cards =>
+                            <div className="card-set">
+                                {cards.map(card =>
+                                    <div className="card-container">
+                                        <CardView card={card} />
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                    </div>
+                    {discarding &&
+                        <div className={`discardings discardings-${discarding.by}`} onAnimationEnd={handleAnimationEnd}>
+                            <div className="card-set">
+                                {discarding.cards.map(card =>
+                                    <div className="card-container">
+                                        <CardView card={card} />
+                                    </div>
+                                )}
+                            </div>
                         </div>
-                    )}
-                </div >
+                    }
+                </div>
                 <Player {...gameInfo.player} deck={gameState.playerDeck} gameStatus={gameState.gameStatus} />
             </div>
             {message &&
@@ -93,4 +107,37 @@ export default function App(props: { random: Random }) {
             }
         </div>
     );
+
+    function handleTurnEnd(result: TurnResult) {
+        const cpuDeck = gameState.cpuDeck[gameState.currentTurn];
+        const nextTurn = gameState.currentTurn === 4 ? 0 : gameState.currentTurn + 1;
+        if (result.action === "pass") {
+            setGameState({
+                ...gameState,
+                currentTurn: nextTurn
+            });
+        } else {
+            const newDeck = cpuDeck.filter(x => !result.discards.includes(x));
+            setDiscarding({
+                by: gameState.currentTurn,
+                cards: result.discards
+            });
+            setGameState({
+                ...gameState,
+                currentTurn: nextTurn,
+                stack: gameState.stack,
+                cpuDeck: gameState.cpuDeck.map((d, i) => i === gameState.currentTurn ? newDeck : d),
+            });
+        }
+    }
+
+    function handleAnimationEnd() {
+        if (discarding !== undefined) {
+            setGameState({
+                ...gameState,
+                stack: [discarding.cards, ...gameState.stack],
+            });
+            setDiscarding(undefined);
+        }
+    }
 }
