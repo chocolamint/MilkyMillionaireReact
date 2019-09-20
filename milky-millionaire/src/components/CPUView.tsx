@@ -27,8 +27,8 @@ export default function CPU(props: CPUProps) {
         } else {
             setIsPassing(true);
             setTimeout(() => {
-                setIsPassing(false);
                 props.onTurnEnd({ action: "pass" });
+                setIsPassing(false);
             }, 500);
         }
     }
