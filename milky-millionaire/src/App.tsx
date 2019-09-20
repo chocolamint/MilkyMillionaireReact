@@ -4,7 +4,7 @@ import CPUView from './components/CPUView';
 import CardView from './components/CardView';
 import Player from './components/PlayerView';
 import { GameStatus, Random, shuffle, deal, TurnResult } from './models/Game';
-import { allCards, Card } from './models/Card';
+import { allCards, Card, cardToString } from './models/Card';
 
 interface DiscardedCards {
     by: number;
@@ -60,7 +60,7 @@ export default function App(props: { random: Random }) {
                 <ul className="cpus">
                     {gameInfo.cpus.map((cpu, i) => {
                         return (
-                            <li className="cpu">
+                            <li className="cpu" key={`cpu-${i}`}>
                                 <CPUView {...cpu}
                                     isMyTurn={i === gameState.currentTurn && discarding === undefined}
                                     cards={gameState.decks[i]}
@@ -74,9 +74,9 @@ export default function App(props: { random: Random }) {
                 <div className="board">
                     <div className="discarded">
                         {gameState.stack.map(cards =>
-                            <div className="card-set">
+                            <div className="card-set" key={`discarded-set-${cards.map(cardToString).join("-")}`}>
                                 {cards.map(card =>
-                                    <div className="card-container">
+                                    <div className="card-container" key={`discarded-card-${cardToString(card)}`}>
                                         <CardView card={card} />
                                     </div>
                                 )}
@@ -87,7 +87,7 @@ export default function App(props: { random: Random }) {
                         <div className={`discardings discardings-${discarding.by}`} onAnimationEnd={handleAnimationEnd}>
                             <div className="card-set">
                                 {discarding.cards.map(card =>
-                                    <div className="card-container">
+                                    <div className="card-container" key={`discardings-card-${cardToString(card)}`}>
                                         <CardView card={card} />
                                     </div>
                                 )}

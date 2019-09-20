@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./PlayerView.scss";
 import CardView from "./CardView";
-import { Card } from "../models/Card";
+import { Card, cardToString } from "../models/Card";
 import { GameStatus, TurnResult } from "../models/Game";
 import { Rule } from "../models/Rule";
 import PlayerButton from "./PlayerButton";
@@ -45,7 +45,7 @@ export default function Player(props: Readonly<PlayerProps>) {
                     stagings.includes(card) && classNames.push("staging");
 
                     return (
-                        <div className={classNames.join(" ")}>
+                        <div className={classNames.join(" ")} key={`player-card-${cardToString(card)}`}>
                             <CardView card={card}
                                 disabled={props.isMyTurn && !canToggle(card)}
                                 onClick={handleCardClick}
