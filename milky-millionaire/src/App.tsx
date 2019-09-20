@@ -52,7 +52,7 @@ export default function App(props: { random: Random }) {
 
     return (
         <div className="main">
-            <div className="board">
+            <div className="game">
                 <ul className="cpus">
                     {gameInfo.cpus.map((cpu, i) => {
                         // CPUを描画
@@ -69,25 +69,30 @@ export default function App(props: { random: Random }) {
                         );
                     })}
                 </ul>
-                <div className="discard">
-                    {gameState.stack.map(cards =>
-                        <div className="card-set">
-                            {cards.map(card =>
-                                <div className="card-container">
-                                    <CardView card={card} />
-                                </div>
-                            )}
-                        </div>
-                    )}
-                </div >
-                {discardings &&
-                    <div className="discardings" onAnimationEnd={handleAnimationEnd}>
-                        {discardings.map(card =>
-                            <div className="card-container">
-                                <CardView card={card} />
+                <div className="board">
+                    <div className="discard">
+                        {gameState.stack.map(cards =>
+                            <div className="card-set">
+                                {cards.map(card =>
+                                    <div className="card-container">
+                                        <CardView card={card} />
+                                    </div>
+                                )}
                             </div>
                         )}
-                    </div>}
+                    </div>
+                    {discardings &&
+                        <div className="discardings" onAnimationEnd={handleAnimationEnd}>
+                            <div className="card-set">
+                                {discardings.map(card =>
+                                    <div className="card-container">
+                                        <CardView card={card} />
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    }
+                </div>
                 <Player {...gameInfo.player} deck={gameState.playerDeck} gameStatus={gameState.gameStatus} />
             </div>
             {message &&

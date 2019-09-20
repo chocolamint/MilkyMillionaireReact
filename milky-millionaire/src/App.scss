@@ -1,25 +1,21 @@
 .main {
     height: 100%;
 
-    .cpus {
-        display: flex;
-
-        .cpu {
-            flex: 1;
-        }
-    }
-
-    .board {
+    .game {
         height: 100%;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
 
-        .computers {
-            flex: 1;
+        .cpus {
+            display: flex;
+
+            .cpu {
+                flex: 1;
+            }
         }
 
-        .discard {
+        .board {
             flex: 1;
             display: flex;
             flex-direction: row;
@@ -27,43 +23,68 @@
             align-items: center;
             position: relative;
 
-            .card-set {
-                display: none;
+            .discard {
 
-                &:nth-child(1),
-                &:nth-child(2) {
-                    display: flex;
+                .card-set {
+                    display: none;
+
+                    &:nth-child(1),
+                    &:nth-child(2) {
+                        display: flex;
+                    }
+
+                    justify-content: center;
+                    align-items: center;
+
+                    &:nth-child(2) {
+                        position: absolute;
+                        top: 0;
+                        right: 0;
+                        bottom: 0;
+                        left: 0;
+                        margin: -16vw auto auto -8vw;
+                        z-index: -1;
+                    }
+
+                    .card-container {
+                        width: 10vw;
+                    }
                 }
 
+            }
+
+            .discardings {
+                animation: discard-animation-2 500ms;
+                position: absolute;
+                top: 0;
+                right: 0;
+                bottom: 0;
+                left: 0;
+                margin: auto;
+                width: auto;
+                height: auto;
+                display: flex;
                 justify-content: center;
                 align-items: center;
 
-                &:nth-child(2) {
-                    position: absolute;
-                    top: 0;
-                    right: 0;
-                    bottom: 0;
-                    left: 0;
-                    margin: -16vw auto auto -8vw;
-                    z-index: -1;
+                .card-set {
+
+                    .card-container {
+                        width: 10vw;
+                    }
+                }
+            }
+
+            @keyframes discard-animation-2 {
+                from {
+                    transform: translate(6vw, -20vw);
                 }
 
-                .card-container {
-                    width: 10vw;
+                to {
+                    transform: translate(0, 0);
                 }
             }
         }
-
-        .discardings {
-
-            animation: test 1s;
-
-            .card-container {
-                width: 10vw;
-            }
-        }
-
-        @keyframes test {}
 
         .player {
             flex: 1;
