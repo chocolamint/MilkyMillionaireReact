@@ -23,6 +23,8 @@ export default function App(props: { random: Random }) {
         decks: dealCards,
         currentTurn,
         stack: [] as Card[][],
+        passCount: 0,
+        lastDiscard: undefined as number | undefined
     });
     const [discarding, setDiscarding] = useState(undefined as DiscardedCards | undefined);
 
@@ -116,10 +118,22 @@ export default function App(props: { random: Random }) {
     function handleTurnEnd(result: TurnResult) {
         const deck = gameState.decks[gameState.currentTurn];
         if (result.action === "pass") {
-            setGameState({
-                ...gameState,
-                currentTurn: getNextTurn()
-            });
+            const passCount = gameState.passCount + 1;
+            if (passCount === 4) {
+                // next trick
+                setGameState({
+                    ...gameState,
+                    stack: [],
+                    currentTurn: gameState.lastDiscard!,
+                    passCount: 0
+                });
+            } else {
+                setGameState({
+                    ...gameState,
+                    currentTurn: getNextTurn(),
+                    passCount
+                });
+            }
         } else {
             const newDeck = deck.filter(x => !result.discards.includes(x));
             setDiscarding({
@@ -130,6 +144,8 @@ export default function App(props: { random: Random }) {
                 ...gameState,
                 stack: gameState.stack,
                 decks: gameState.decks.map((d, i) => i === gameState.currentTurn ? newDeck : d),
+                lastDiscard: gameState.currentTurn,
+                passCount: 0
             });
         }
     }

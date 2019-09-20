@@ -87,7 +87,7 @@
             }
 
             @each $i,
-            $x in (0: -16vw, 1: 6vw, 2: 6vw, 3: 16vw) {
+            $x in (0: -16vw, 1: -6vw, 2: 6vw, 3: 16vw) {
 
                 @keyframes discard-animation-#{$i} {
                     from {
