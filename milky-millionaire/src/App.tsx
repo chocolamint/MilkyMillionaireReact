@@ -20,10 +20,9 @@ export default function App(props: { random: Random }) {
 
     const [gameState, setGameState] = useState({
         gameStatus: GameStatus.Playing,
-        cpuDeck: dealCards.slice(0, 4),
+        decks: dealCards,
         currentTurn,
         stack: [] as Card[][],
-        playerDeck: dealCards[4]
     });
     const [discarding, setDiscarding] = useState(undefined as DiscardedCards | undefined);
 
@@ -64,7 +63,7 @@ export default function App(props: { random: Random }) {
                             <li className="cpu">
                                 <CPUView {...cpu}
                                     isMyTurn={i === gameState.currentTurn && discarding === undefined}
-                                    cards={gameState.cpuDeck[i]}
+                                    cards={gameState.decks[i]}
                                     stackTop={gameState.stack[0]}
                                     random={random}
                                     onTurnEnd={handleTurnEnd} />
@@ -98,9 +97,10 @@ export default function App(props: { random: Random }) {
                 </div>
                 <Player {...gameInfo.player}
                     stackTop={gameState.stack[0]}
-                    deck={gameState.playerDeck}
+                    deck={gameState.decks[4]}
                     gameStatus={gameState.gameStatus}
                     isMyTurn={gameState.currentTurn === 4}
+                    onTurnEnd={handleTurnEnd}
                 />
             </div>
             {message &&
@@ -114,14 +114,14 @@ export default function App(props: { random: Random }) {
     );
 
     function handleTurnEnd(result: TurnResult) {
-        const cpuDeck = gameState.cpuDeck[gameState.currentTurn];
+        const deck = gameState.decks[gameState.currentTurn];
         if (result.action === "pass") {
             setGameState({
                 ...gameState,
                 currentTurn: getNextTurn()
             });
         } else {
-            const newDeck = cpuDeck.filter(x => !result.discards.includes(x));
+            const newDeck = deck.filter(x => !result.discards.includes(x));
             setDiscarding({
                 by: gameState.currentTurn,
                 cards: result.discards
@@ -129,7 +129,7 @@ export default function App(props: { random: Random }) {
             setGameState({
                 ...gameState,
                 stack: gameState.stack,
-                cpuDeck: gameState.cpuDeck.map((d, i) => i === gameState.currentTurn ? newDeck : d),
+                decks: gameState.decks.map((d, i) => i === gameState.currentTurn ? newDeck : d),
             });
         }
     }

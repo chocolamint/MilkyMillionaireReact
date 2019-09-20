@@ -1,10 +1,11 @@
-import React, { ReactNode } from "react";
+import React, { ReactNode, EventHandler } from "react";
 import "./PlayerButton.scss";
 
 interface PlayerButtonProps {
     className?: string;
     disabled?: boolean;
     children?: ReactNode;
+    onClick?: () => void;
     buttonColor: "pink" | "green";
 }
 
@@ -19,8 +20,12 @@ export default function PlayerButton(props: Readonly<PlayerButtonProps>) {
     }
 
     return (
-        <div className={classNames.join(" ")}>
+        <div className={classNames.join(" ")} onClick={handleClick}>
             {props.children}
         </div>
     );
+
+    function handleClick() {
+        props.onClick && props.onClick();
+    }
 }

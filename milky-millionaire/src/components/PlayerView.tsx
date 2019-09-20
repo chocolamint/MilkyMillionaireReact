@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "./PlayerView.scss";
 import CardView from "./CardView";
 import { Card } from "../models/Card";
-import { GameStatus } from "../models/Game";
+import { GameStatus, TurnResult } from "../models/Game";
 import { Rule } from "../models/Rule";
 import PlayerButton from "./PlayerButton";
 
@@ -12,6 +12,7 @@ export interface PlayerProps {
     deck: readonly Card[];
     isMyTurn: boolean;
     gameStatus: GameStatus;
+    onTurnEnd: (result: TurnResult) => void;
 }
 
 export default function Player(props: Readonly<PlayerProps>) {
@@ -26,7 +27,7 @@ export default function Player(props: Readonly<PlayerProps>) {
                     パス
                 </PlayerButton>
                 {props.gameStatus !== GameStatus.GameSet ?
-                    <PlayerButton className="discard-button" disabled={!canDiscard()} buttonColor="pink">
+                    <PlayerButton className="discard-button" disabled={!canDiscard()} buttonColor="pink" onClick={handleDiscardClick}>
                         カードを出す
                     </PlayerButton> :
                     <PlayerButton className="next-game-button" buttonColor="pink">
@@ -77,5 +78,11 @@ export default function Player(props: Readonly<PlayerProps>) {
         } else {
             setStagings(stagings.concat([card]));
         }
+    }
+
+    function handleDiscardClick() {
+        const discards = stagings;
+        setStagings([]);
+        props.onTurnEnd({ action: "discard", discards });
     }
 }
