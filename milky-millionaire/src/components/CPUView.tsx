@@ -21,24 +21,25 @@ export interface CPUProps {
 
 export default function CPU(props: CPUProps) {
 
-    const [turnResult, setTurnResult] = useState(undefined as TurnResult | undefined);
+    const [turn, setTurn] = useState(undefined as TurnResult | undefined);
 
-    if (props.isMyTurn && turnResult === undefined) {
-        const result = turnCPU(props.stackTop, props.cards, props.random);
-        setTurnResult(result);
+    if (props.isMyTurn && turn === undefined) {
+        setTurn(
+            turnCPU(props.stackTop, props.cards, props.random)
+        );
     }
 
     const isDiscarding = (card: Card) => {
-        if (turnResult && turnResult.action === "discard") {
-            return turnResult.cards.includes(card);
+        if (turn && turn.action === "discard") {
+            return turn.discards.includes(card);
         }
         return false;
     };
 
     const handleAnimationEnd = () => {
-        if (turnResult !== undefined) {
-            props.onTurnEnd(turnResult);
-            setTurnResult(undefined);
+        if (turn !== undefined) {
+            props.onTurnEnd(turn);
+            setTurn(undefined);
         }
     };
 
@@ -57,9 +58,9 @@ export default function CPU(props: CPUProps) {
                     <div className="card"></div>
                 )}
             </div>
-            {turnResult && turnResult.action === "discard" &&
+            {turn && turn.action === "discard" &&
                 <div className="discarding" onAnimationEnd={handleAnimationEnd}>
-                    {turnResult.cards.map(card => (
+                    {turn.discards.map(card => (
                         <CardView card={card} />
                     ))}
                 </div>

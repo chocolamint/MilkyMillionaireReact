@@ -14,14 +14,12 @@ export interface GameState {
     playerDeck: Card[]
 }
 
-export type TurnResult = Discard | Pass;
-export interface Discard {
+export type TurnResult = {
     action: "discard",
-    cards: Card[]
-}
-export interface Pass {
+    discards: Card[]
+} | {
     action: "pass"
-}
+};
 
 export function combination<T>(xs: ReadonlyArray<T>, k: number): T[][] {
 

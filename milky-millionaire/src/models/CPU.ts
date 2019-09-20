@@ -1,5 +1,5 @@
 import { Card } from "./Card";
-import { GameState, combination, Random, TurnResult } from "./Game";
+import { combination, Random, TurnResult } from "./Game";
 import { Rule } from "./Rule";
 
 export function turnCPU(stackTop: readonly Card[] | undefined, deck: readonly Card[], random: Random): TurnResult {
@@ -12,12 +12,12 @@ export function turnCPU(stackTop: readonly Card[] | undefined, deck: readonly Ca
     ];
     const discardables = combinations.filter(x => Rule.canDiscard(stackTop, x));
 
-    const discard = discardables[random.next(discardables.length)];
+    const discards = discardables[random.next(discardables.length)];
 
-    if (discard) {
+    if (discards) {
         return {
             action: "discard",
-            cards: discard
+            discards
         };
     } else {
         return {

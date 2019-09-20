@@ -100,11 +100,11 @@ export default function App(props: { random: Random }) {
                 currentTurn: nextTurn
             });
         } else {
-            const newDeck = cpuDeck.filter(x => !result.cards.includes(x));
+            const newDeck = cpuDeck.filter(x => !result.discards.includes(x));
             setGameState({
                 ...gameState,
                 currentTurn: nextTurn,
-                stack: [result.cards, ...gameState.stack],
+                stack: [result.discards, ...gameState.stack],
                 cpuDeck: gameState.cpuDeck.map((d, i) => i === gameState.currentTurn ? newDeck : d),
             });
         }
