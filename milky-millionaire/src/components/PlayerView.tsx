@@ -22,14 +22,14 @@ export default function Player(props: Readonly<PlayerProps>) {
     return (
         <div className="player">
             <div className="player-buttons">
-                <PlayerButton className="pass-button">
+                <PlayerButton className="pass-button" disabled={!props.isMyTurn} buttonColor="green">
                     パス
                 </PlayerButton>
                 {props.gameStatus !== GameStatus.GameSet ?
-                    <PlayerButton className="discard-button">
+                    <PlayerButton className="discard-button" disabled={!canDiscard()} buttonColor="pink">
                         カードを出す
                     </PlayerButton> :
-                    <PlayerButton className="next-game-button">
+                    <PlayerButton className="next-game-button" buttonColor="pink">
                         次のゲームへ
                     </PlayerButton>
                 }
@@ -62,6 +62,10 @@ export default function Player(props: Readonly<PlayerProps>) {
 
     function canStage(card: Card) {
         return Rule.canDiscard(props.stackTop, stagings.concat([card]));
+    }
+
+    function canDiscard() {
+        return props.isMyTurn && Rule.canDiscard(props.stackTop, stagings);
     }
 
     function handleCardClick(card: Card) {

@@ -4,12 +4,13 @@ import "./PlayerButton.scss";
 interface PlayerButtonProps {
     className?: string;
     disabled?: boolean;
-    children?: ReactNode
+    children?: ReactNode;
+    buttonColor: "pink" | "green";
 }
 
 export default function PlayerButton(props: Readonly<PlayerButtonProps>) {
 
-    const classNames = ["player-button"];
+    const classNames = ["player-button", props.buttonColor];
     if (props.className) {
         classNames.push(props.className);
     }
