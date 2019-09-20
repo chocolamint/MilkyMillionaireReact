@@ -4,6 +4,7 @@ import CardView from "./CardView";
 import { Card } from "../models/Card";
 import { GameStatus } from "../models/Game";
 import { Rule } from "../models/Rule";
+import PlayerButton from "./PlayerButton";
 
 export interface PlayerProps {
     rank: "大富豪" | "富豪" | "平民" | "貧民" | "大貧民";
@@ -21,16 +22,16 @@ export default function Player(props: Readonly<PlayerProps>) {
     return (
         <div className="player">
             <div className="player-buttons">
-                <div className="pass-button player-button">
+                <PlayerButton className="pass-button">
                     パス
-                </div>
+                </PlayerButton>
                 {props.gameStatus !== GameStatus.GameSet ?
-                    <div className="discard-button player-button">
+                    <PlayerButton className="discard-button">
                         カードを出す
-                    </div> :
-                    <div className="next-game-button player-button">
+                    </PlayerButton> :
+                    <PlayerButton className="next-game-button">
                         次のゲームへ
-                    </div>
+                    </PlayerButton>
                 }
             </div>
             <div className="player-rank">

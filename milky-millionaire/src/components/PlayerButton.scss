@@ -1,0 +1,16 @@
+.player-button {
+    background: rgba(32, 32, 32, 0.8);
+    border-width: 0.8vw;
+    margin: 1vw;
+    border-radius: 1.4vw;
+    text-align: center;
+    font-weight: bold;
+    padding: 2.4vw 0;
+    position: relative;
+    color: #909090;
+    font-size: 4.5vw;
+
+    &.enabled {
+        color: #ffffff;
+    }
+}
