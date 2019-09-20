@@ -1,5 +1,7 @@
 .main {
     height: 100%;
+    width: 100%;
+    overflow: hidden;
 
     .game {
         height: 100%;
@@ -54,7 +56,6 @@
             }
 
             .discardings {
-                animation: discard-animation-2 500ms;
                 position: absolute;
                 top: 0;
                 right: 0;
@@ -67,17 +68,65 @@
                 justify-content: center;
                 align-items: center;
 
+                animation-duration: 500ms;
+
                 .card-set {
 
                     .card-container {
                         width: 10vw;
                     }
                 }
+
+                &.discardings-0 {
+                    animation-name: discard-animation-0;
+                }
+
+                &.discardings-1 {
+                    animation-name: discard-animation-1;
+                }
+
+                &.discardings-2 {
+                    animation-name: discard-animation-2;
+                }
+
+                &.discardings-3 {
+                    animation-name: discard-animation-3;
+                }
+            }
+
+            @keyframes discard-animation-0 {
+                from {
+                    transform: translate(-16vw, -20vw);
+                }
+
+                to {
+                    transform: translate(0, 0);
+                }
+            }
+
+            @keyframes discard-animation-1 {
+                from {
+                    transform: translate(-6vw, -20vw);
+                }
+
+                to {
+                    transform: translate(0, 0);
+                }
             }
 
             @keyframes discard-animation-2 {
                 from {
                     transform: translate(6vw, -20vw);
+                }
+
+                to {
+                    transform: translate(0, 0);
+                }
+            }
+
+            @keyframes discard-animation-3 {
+                from {
+                    transform: translate(16vw, -20vw);
                 }
 
                 to {

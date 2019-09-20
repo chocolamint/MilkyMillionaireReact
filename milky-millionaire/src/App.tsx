@@ -6,6 +6,11 @@ import Player from './components/PlayerView';
 import { GameStatus, Random, shuffle, deal, TurnResult } from './models/Game';
 import { allCards, Card } from './models/Card';
 
+interface DiscardedCards {
+    by: number;
+    cards: Card[];
+}
+
 export default function App(props: { random: Random }) {
 
     const { random } = props;
@@ -20,7 +25,7 @@ export default function App(props: { random: Random }) {
         stack: [] as Card[][],
         playerDeck: dealCards[4]
     });
-    const [discardings, setDiscardings] = useState(undefined as Card[] | undefined);
+    const [discarding, setDiscarding] = useState(undefined as DiscardedCards | undefined);
 
     const gameInfo = {
         cpus: [{
@@ -55,11 +60,10 @@ export default function App(props: { random: Random }) {
             <div className="game">
                 <ul className="cpus">
                     {gameInfo.cpus.map((cpu, i) => {
-                        // CPUを描画
                         return (
                             <li className="cpu">
                                 <CPUView {...cpu}
-                                    isMyTurn={i === gameState.currentTurn && discardings === undefined}
+                                    isMyTurn={i === gameState.currentTurn && discarding === undefined}
                                     position={i}
                                     cards={gameState.cpuDeck[i]}
                                     stackTop={gameState.stack[0]}
@@ -81,10 +85,10 @@ export default function App(props: { random: Random }) {
                             </div>
                         )}
                     </div>
-                    {discardings &&
-                        <div className="discardings" onAnimationEnd={handleAnimationEnd}>
+                    {discarding &&
+                        <div className={`discardings discardings-${discarding.by}`} onAnimationEnd={handleAnimationEnd}>
                             <div className="card-set">
-                                {discardings.map(card =>
+                                {discarding.cards.map(card =>
                                     <div className="card-container">
                                         <CardView card={card} />
                                     </div>
@@ -115,23 +119,26 @@ export default function App(props: { random: Random }) {
             });
         } else {
             const newDeck = cpuDeck.filter(x => !result.discards.includes(x));
+            setDiscarding({
+                by: gameState.currentTurn,
+                cards: result.discards
+            });
             setGameState({
                 ...gameState,
                 currentTurn: nextTurn,
                 stack: gameState.stack,
                 cpuDeck: gameState.cpuDeck.map((d, i) => i === gameState.currentTurn ? newDeck : d),
             });
-            setDiscardings(result.discards);
         }
     }
 
     function handleAnimationEnd() {
-        if (discardings !== undefined) {
+        if (discarding !== undefined) {
             setGameState({
                 ...gameState,
-                stack: [discardings, ...gameState.stack],
+                stack: [discarding.cards, ...gameState.stack],
             });
-            setDiscardings(undefined);
+            setDiscarding(undefined);
         }
     }
 }
