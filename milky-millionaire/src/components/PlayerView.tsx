@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import "./PlayerView.scss";
 import CardView from "./CardView";
 import { Card } from "../models/Card";
@@ -11,6 +11,9 @@ export interface PlayerProps {
 }
 
 export default function Player(props: PlayerProps) {
+
+    const [stagings, setStagings] = useState([] as Card[]);
+
     return (
         <div className="player">
             <div className="player-buttons">
@@ -31,11 +34,19 @@ export default function Player(props: PlayerProps) {
             </div>
             <div className="deck">
                 {props.deck.map(card =>
-                    <div className="card-container">
+                    <div className={`card-container ${stagings.includes(card) ? "staging" : ""}`} onClick={() => handleCardClick(card)}>
                         <CardView card={card} />
                     </div>
                 )}
             </div>
         </div>
     );
+
+    function handleCardClick(card: Card) {
+        if (stagings.includes(card)) {
+            setStagings(stagings.filter(x => x !== card));
+        } else {
+            setStagings(stagings.concat([card]));
+        }
+    }
 }

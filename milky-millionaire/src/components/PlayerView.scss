@@ -119,6 +119,10 @@
         .card-container {
             width: 10vw;
             margin: 0 0.5vw;
+
+            &.staging {
+                transform: translate(0, -2vw);
+            }
         }
     }
 }
