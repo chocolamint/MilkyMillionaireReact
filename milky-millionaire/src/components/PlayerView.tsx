@@ -16,6 +16,7 @@ export interface PlayerProps {
 export default function Player(props: Readonly<PlayerProps>) {
 
     const [stagings, setStagings] = useState([] as Card[]);
+    const deck = Rule.sortCards(props.deck);
 
     return (
         <div className="player">
@@ -36,7 +37,7 @@ export default function Player(props: Readonly<PlayerProps>) {
                 {props.rank}
             </div>
             <div className="deck">
-                {props.deck.map(card => {
+                {deck.map(card => {
 
                     const classNames = ["card-container"];
                     stagings.includes(card) && classNames.push("staging");

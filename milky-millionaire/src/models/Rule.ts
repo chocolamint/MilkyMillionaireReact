@@ -1,5 +1,24 @@
 import { Card, NumberCard } from "./Card";
 
+function sortCards(cards: readonly Card[]) {
+    const sorted = cards.slice();
+    sorted.sort((a, b) => getCardRank(a) - getCardRank(b));
+    return sorted;
+
+    function getCardRank(card: Card) {
+        return getHeight(card) * 10 + getSuitRank(card);
+    }
+    function getSuitRank(card: Card) {
+        if (card.joker) return 5;
+        switch (card.suit) {
+            case "heart": return 0;
+            case "diamond": return 1;
+            case "spade": return 2;
+            case "club": return 3;
+        }
+    }
+}
+
 function canDiscard(stackTop: readonly Card[] | undefined, cards: readonly Card[]) {
 
     if (cards.length === 0) return false;
@@ -27,5 +46,6 @@ function getHeight(card: Card) {
 }
 
 export const Rule = {
+    sortCards,
     canDiscard,
 };
