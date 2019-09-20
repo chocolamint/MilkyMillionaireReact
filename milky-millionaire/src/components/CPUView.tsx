@@ -28,17 +28,16 @@ export default function CPU(props: CPUProps) {
             if (turnResult === undefined) {
                 const result = turnCPU(props.stackTop, props.cards, props.random);
                 setTurnResult(result);
-            } else {
-                const [source, token] = cancellation();
-                (async () => {
-                    await sleep(1000, token);
-                    props.onTurnEnd(turnResult);
-                    setTurnResult(undefined);
-                })();
-                return () => source.cancel();
             }
         }
     });
+
+    const handleAnimationEnd = () => {
+        if (turnResult !== undefined) {
+            props.onTurnEnd(turnResult);
+            setTurnResult(undefined);
+        }
+    };
 
     return (
         <div className={`cpu position-${props.position}`}>
@@ -54,7 +53,7 @@ export default function CPU(props: CPUProps) {
                 )}
             </div>
             {turnResult && turnResult.action === "discard" &&
-                <div className="discarding">
+                <div className="discarding" onAnimationEnd={handleAnimationEnd}>
                     {turnResult.cards.map(card => (
                         <CardView card={card} />
                     ))}
