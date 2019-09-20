@@ -23,14 +23,10 @@ export default function CPU(props: CPUProps) {
 
     const [turnResult, setTurnResult] = useState(undefined as TurnResult | undefined);
 
-    useEffect(() => {
-        if (props.isMyTurn) {
-            if (turnResult === undefined) {
-                const result = turnCPU(props.stackTop, props.cards, props.random);
-                setTurnResult(result);
-            }
-        }
-    });
+    if (props.isMyTurn && turnResult === undefined) {
+        const result = turnCPU(props.stackTop, props.cards, props.random);
+        setTurnResult(result);
+    }
 
     const handleAnimationEnd = () => {
         if (turnResult !== undefined) {
