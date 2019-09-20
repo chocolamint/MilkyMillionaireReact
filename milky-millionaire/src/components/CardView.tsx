@@ -4,15 +4,18 @@ import { Card } from "../models/Card";
 
 export interface CardViewProps {
     card: Card;
+    disabled?: boolean;
+    onClick?: (card: Card) => void;
 }
 
-export default function (props: CardViewProps) {
+export default function (props: Readonly<CardViewProps>) {
 
     const { card } = props;
     const classes = ["card", card.joker ? "joker" : card.suit];
+    props.disabled && classes.push("disabled");
 
     return (
-        <div className={classes.join(" ")}>
+        <div className={classes.join(" ")} onClick={handleClick}>
             {card.joker ?
                 <div>
                     <span>Joker</span>
@@ -45,4 +48,9 @@ export default function (props: CardViewProps) {
             }
         </div>
     );
+
+    function handleClick() {
+        if (props.disabled) return;
+        props.onClick && props.onClick(props.card);
+    }
 }

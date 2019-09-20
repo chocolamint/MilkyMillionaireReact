@@ -1,41 +1,92 @@
-import React from "react";
+import React, { useState } from "react";
 import "./PlayerView.scss";
 import CardView from "./CardView";
 import { Card } from "../models/Card";
-import { GameStatus } from "../models/Game";
+import { GameStatus, TurnResult } from "../models/Game";
+import { Rule } from "../models/Rule";
+import PlayerButton from "./PlayerButton";
 
 export interface PlayerProps {
     rank: "大富豪" | "富豪" | "平民" | "貧民" | "大貧民";
+    stackTop: readonly Card[];
     deck: readonly Card[];
+    isMyTurn: boolean;
     gameStatus: GameStatus;
+    onTurnEnd: (result: TurnResult) => void;
 }
 
-export default function Player(props: PlayerProps) {
+export default function Player(props: Readonly<PlayerProps>) {
+
+    const [stagings, setStagings] = useState([] as Card[]);
+    const deck = Rule.sortCards(props.deck);
+
     return (
         <div className="player">
             <div className="player-buttons">
-                <div className="pass-button player-button">
+                <PlayerButton className="pass-button" disabled={!props.isMyTurn} buttonColor="green" onClick={handlePassClick}>
                     パス
-                </div>
+                </PlayerButton>
                 {props.gameStatus !== GameStatus.GameSet ?
-                    <div className="discard-button player-button">
+                    <PlayerButton className="discard-button" disabled={!canDiscard()} buttonColor="pink" onClick={handleDiscardClick}>
                         カードを出す
-                    </div> :
-                    <div className="next-game-button player-button">
+                    </PlayerButton> :
+                    <PlayerButton className="next-game-button" buttonColor="pink">
                         次のゲームへ
-                    </div>
+                    </PlayerButton>
                 }
             </div>
             <div className="player-rank">
                 {props.rank}
             </div>
             <div className="deck">
-                {props.deck.map(card =>
-                    <div className="card-container">
-                        <CardView card={card} />
-                    </div>
-                )}
+                {deck.map(card => {
+
+                    const classNames = ["card-container"];
+                    stagings.includes(card) && classNames.push("staging");
+
+                    return (
+                        <div className={classNames.join(" ")}>
+                            <CardView card={card}
+                                disabled={props.isMyTurn && !canToggle(card)}
+                                onClick={handleCardClick}
+                            />
+                        </div>
+                    );
+                })}
             </div>
         </div>
     );
+
+    function canToggle(card: Card) {
+        return stagings.includes(card) ? true : canStage(card);
+    }
+
+    function canStage(card: Card) {
+        return Rule.canDiscard(props.stackTop, stagings.concat([card]));
+    }
+
+    function canDiscard() {
+        return props.isMyTurn && Rule.canDiscard(props.stackTop, stagings);
+    }
+
+    function handleCardClick(card: Card) {
+
+        if (!props.isMyTurn) return;
+
+        if (stagings.includes(card)) {
+            setStagings(stagings.filter(x => x !== card));
+        } else {
+            setStagings(stagings.concat([card]));
+        }
+    }
+
+    function handlePassClick() {
+        props.onTurnEnd({ action: "pass" });
+    }
+
+    function handleDiscardClick() {
+        const discards = stagings;
+        setStagings([]);
+        props.onTurnEnd({ action: "discard", discards });
+    }
 }

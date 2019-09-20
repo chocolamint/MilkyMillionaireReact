@@ -71,6 +71,7 @@
                 animation-duration: 500ms;
 
                 .card-set {
+                    display: flex;
 
                     .card-container {
                         width: 10vw;
@@ -78,7 +79,7 @@
                 }
             }
 
-            @for $i from 0 to 4 {
+            @for $i from 0 to 5 {
 
                 .discardings-#{$i} {
                     animation-name: discard-animation-#{$i};
@@ -96,6 +97,16 @@
                     to {
                         transform: translate(0, 0);
                     }
+                }
+            }
+
+            @keyframes discard-animation-4 {
+                from {
+                    transform: translate(0, 20vw);
+                }
+
+                to {
+                    transform: translate(0, 0);
                 }
             }
         }
