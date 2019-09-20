@@ -21,7 +21,6 @@ export default function App(props: { random: Random }) {
         playerDeck: dealCards[4]
     });
     const [discardings, setDiscardings] = useState(undefined as Card[] | undefined);
-    const [processing, setProcessing] = useState(false);
 
     const gameInfo = {
         cpus: [{
@@ -60,7 +59,7 @@ export default function App(props: { random: Random }) {
                         return (
                             <li className="cpu">
                                 <CPUView {...cpu}
-                                    isMyTurn={i === gameState.currentTurn && !processing}
+                                    isMyTurn={i === gameState.currentTurn && discardings === undefined}
                                     position={i}
                                     cards={gameState.cpuDeck[i]}
                                     stackTop={gameState.stack[0]}
@@ -118,16 +117,16 @@ export default function App(props: { random: Random }) {
                 cpuDeck: gameState.cpuDeck.map((d, i) => i === gameState.currentTurn ? newDeck : d),
             });
             setDiscardings(result.discards);
-            setProcessing(true);
         }
     }
 
     function handleAnimationEnd() {
-        setGameState({
-            ...gameState,
-            stack: [discardings!, ...gameState.stack],
-        });
-        setDiscardings(undefined);
-        setProcessing(false);
+        if (discardings !== undefined) {
+            setGameState({
+                ...gameState,
+                stack: [discardings, ...gameState.stack],
+            });
+            setDiscardings(undefined);
+        }
     }
 }
