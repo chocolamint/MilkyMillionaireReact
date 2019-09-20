@@ -71,6 +71,9 @@
     }
 
     .discarding {
+        display: flex;
+        flex-direction: row;
+
         .card {
             width: 10vw;
         }
