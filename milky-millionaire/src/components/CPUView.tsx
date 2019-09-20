@@ -28,12 +28,21 @@ export default function CPU(props: CPUProps) {
         setTurnResult(result);
     }
 
+    const isDiscarding = (card: Card) => {
+        if (turnResult && turnResult.action === "discard") {
+            return turnResult.cards.includes(card);
+        }
+        return false;
+    };
+
     const handleAnimationEnd = () => {
         if (turnResult !== undefined) {
             props.onTurnEnd(turnResult);
             setTurnResult(undefined);
         }
     };
+
+    const hand = props.cards.filter(x => !isDiscarding(x));
 
     return (
         <div className={`cpu position-${props.position}`}>
@@ -43,8 +52,8 @@ export default function CPU(props: CPUProps) {
             <div className="image" style={{ borderColor: props.color, backgroundColor: props.bgColor }}>
                 <img src={`/assets/images/${props.imageFileName}`} alt="" />
             </div>
-            <div className="cards" data-card-count={props.cards.length}>
-                {props.cards.map(x =>
+            <div className="cards" data-card-count={hand.length}>
+                {hand.map(x =>
                     <div className="card"></div>
                 )}
             </div>
