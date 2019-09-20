@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import "./CPUView.scss";
 import { Card } from "../models/Card";
 import { Random, TurnResult } from "../models/Game";
@@ -18,13 +18,23 @@ export interface CPUProps {
 
 export default function CPU(props: CPUProps) {
 
-    if (props.isMyTurn) {
+    const [isPassing, setIsPassing] = useState(false);
+
+    if (props.isMyTurn && !isPassing) {
         const result = turnCPU(props.stackTop, props.cards, props.random);
-        props.onTurnEnd(result);
+        if (result.action === "discard") {
+            props.onTurnEnd(result);
+        } else {
+            setIsPassing(true);
+            setTimeout(() => {
+                setIsPassing(false);
+                props.onTurnEnd({ action: "pass" });
+            }, 500);
+        }
     }
 
     return (
-        <div className="cpu">
+        <div className={`cpu ${isPassing ? "pass" : ""}`}>
             <div className="name">
                 {props.name}
             </div>

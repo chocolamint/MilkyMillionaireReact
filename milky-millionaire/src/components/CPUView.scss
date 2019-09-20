@@ -3,6 +3,45 @@
     flex-direction: column;
     align-items: center;
 
+    &.pass {
+
+        position: relative;
+
+        @mixin pass() {
+            position: absolute;
+            color: #ffffff;
+            font-family: "M+ 1p black";
+            font-weight: 900;
+            background: hsla(197, 94%, 49%, 0.911);
+            font-size: 6vw;
+            padding: 1vw;
+            z-index: 1;
+            border-radius: 1vw;
+            display: inline-block;
+            width: 6vw;
+            height: 6vw;
+            line-height: 6vw;
+            vertical-align: middle;
+            text-align: center;
+            box-shadow: hsla(209, 94%, 20%, 0.911) 0.4vw 0.4vw 0.4vw;
+            text-shadow: hsla(209, 94%, 20%, 0.911) 0.4vw 0.4vw 0.4vw;
+        }
+
+        &:before {
+            content: "パ";
+            top: 43%;
+            left: 2vw;
+            @include pass();
+        }
+
+        &:after {
+            content: "ス";
+            top: 55%;
+            left: 8vw;
+            @include pass();
+        }
+    }
+
     .name {
         text-align: center;
         font-weight: bold;
