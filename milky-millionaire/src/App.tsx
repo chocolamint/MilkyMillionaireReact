@@ -59,6 +59,7 @@ export default function App(props: { random: Random }) {
                             <li className="cpu">
                                 <CPUView {...cpu}
                                     isMyTurn={i === gameState.currentTurn}
+                                    position={i}
                                     cards={gameState.cpuDeck[i]}
                                     stackTop={gameState.stack[0]}
                                     random={random}

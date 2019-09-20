@@ -69,4 +69,38 @@
             box-sizing: border-box;
         }
     }
+
+    .discarding {
+        .card {
+            width: 10vw;
+        }
+    }
+
+    &.position-2 .discarding {
+        animation: cpu-discarding-2 1000ms;
+    }
+
+    &.position-3 .discarding {
+        animation: cpu-discarding-3 1000ms;
+    }
+
+    @keyframes cpu-discarding-2 {
+        from {
+            transform: translate(5vw, -10vw);
+        }
+
+        to {
+            transform: translate(-10vw, 40vw);
+        }
+    }
+
+    @keyframes cpu-discarding-3 {
+        from {
+            transform: translate(5vw, -10vw);
+        }
+
+        to {
+            transform: translate(-20vw, 40vw);
+        }
+    }
 }
