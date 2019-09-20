@@ -74,7 +74,7 @@ export default function App(props: { random: Random }) {
                 <div className="board">
                     <div className="discarded">
                         {gameState.stack.map(cards =>
-                            <div className="card-set">
+                            <div className="card-set" key={`discarded-set-${cards.map(cardToString).join("-")}`}>
                                 {cards.map(card =>
                                     <div className="card-container" key={`discarded-card-${cardToString(card)}`}>
                                         <CardView card={card} />
