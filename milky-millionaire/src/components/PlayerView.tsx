@@ -3,15 +3,17 @@ import "./PlayerView.scss";
 import CardView from "./CardView";
 import { Card } from "../models/Card";
 import { GameStatus } from "../models/Game";
+import { Rule } from "../models/Rule";
 
 export interface PlayerProps {
     rank: "大富豪" | "富豪" | "平民" | "貧民" | "大貧民";
+    stackTop: readonly Card[];
     deck: readonly Card[];
     isMyTurn: boolean;
     gameStatus: GameStatus;
 }
 
-export default function Player(props: PlayerProps) {
+export default function Player(props: Readonly<PlayerProps>) {
 
     const [stagings, setStagings] = useState([] as Card[]);
 
@@ -34,18 +36,29 @@ export default function Player(props: PlayerProps) {
                 {props.rank}
             </div>
             <div className="deck">
-                {props.deck.map(card =>
-                    <div className={`card-container ${stagings.includes(card) ? "staging" : ""}`} onClick={() => handleCardClick(card)}>
-                        <CardView card={card} />
-                    </div>
-                )}
+                {props.deck.map(card => {
+
+                    const classNames = ["card-container"];
+                    stagings.includes(card) && classNames.push("staging");
+
+                    return (
+                        <div className={classNames.join(" ")} onClick={() => handleCardClick(card)}>
+                            <CardView card={card} disabled={props.isMyTurn && !canStage(card)} />
+                        </div>
+                    );
+                })}
             </div>
         </div>
     );
 
+    function canStage(card: Card) {
+        return Rule.canDiscard(props.stackTop, stagings.concat([card]));
+    }
+
     function handleCardClick(card: Card) {
 
         if (!props.isMyTurn) return;
+        if (!canStage(card)) return;
 
         if (stagings.includes(card)) {
             setStagings(stagings.filter(x => x !== card));

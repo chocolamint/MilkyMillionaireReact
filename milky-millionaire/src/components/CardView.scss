@@ -7,6 +7,10 @@
     height: auto;
     box-sizing: border-box;
 
+    &.disabled {
+        background: #c0c0c0;
+    }
+
     &:before {
         content: "";
         display: block;

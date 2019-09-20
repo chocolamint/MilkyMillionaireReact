@@ -4,12 +4,14 @@ import { Card } from "../models/Card";
 
 export interface CardViewProps {
     card: Card;
+    disabled?: boolean;
 }
 
-export default function (props: CardViewProps) {
+export default function (props: Readonly<CardViewProps>) {
 
     const { card } = props;
     const classes = ["card", card.joker ? "joker" : card.suit];
+    props.disabled && classes.push("disabled");
 
     return (
         <div className={classes.join(" ")}>

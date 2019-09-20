@@ -97,6 +97,7 @@ export default function App(props: { random: Random }) {
                     }
                 </div>
                 <Player {...gameInfo.player}
+                    stackTop={gameState.stack[0]}
                     deck={gameState.playerDeck}
                     gameStatus={gameState.gameStatus}
                     isMyTurn={gameState.currentTurn === 4}
