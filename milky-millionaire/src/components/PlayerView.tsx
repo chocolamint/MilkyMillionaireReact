@@ -23,7 +23,7 @@ export default function Player(props: Readonly<PlayerProps>) {
     return (
         <div className="player">
             <div className="player-buttons">
-                <PlayerButton className="pass-button" disabled={!props.isMyTurn} buttonColor="green">
+                <PlayerButton className="pass-button" disabled={!props.isMyTurn} buttonColor="green" onClick={handlePassClick}>
                     パス
                 </PlayerButton>
                 {props.gameStatus !== GameStatus.GameSet ?
@@ -78,6 +78,10 @@ export default function Player(props: Readonly<PlayerProps>) {
         } else {
             setStagings(stagings.concat([card]));
         }
+    }
+
+    function handlePassClick() {
+        props.onTurnEnd({ action: "pass" });
     }
 
     function handleDiscardClick() {
