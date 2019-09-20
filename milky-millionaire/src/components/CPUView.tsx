@@ -9,15 +9,12 @@ export interface CPUProps {
     bgColor: string | undefined;
     color: string | undefined;
     name: string;
-    position: number;
     isMyTurn: boolean;
     cards: readonly Card[];
     stackTop: Card[] | undefined;
     random: Random;
     onTurnEnd: (result: TurnResult) => void;
 }
-
-const waiting = { action: "waiting" } as const;
 
 export default function CPU(props: CPUProps) {
 
@@ -27,7 +24,7 @@ export default function CPU(props: CPUProps) {
     }
 
     return (
-        <div className={`cpu position-${props.position}`}>
+        <div className="cpu">
             <div className="name">
                 {props.name}
             </div>
