@@ -96,7 +96,11 @@ export default function App(props: { random: Random }) {
                         </div>
                     }
                 </div>
-                <Player {...gameInfo.player} deck={gameState.playerDeck} gameStatus={gameState.gameStatus} />
+                <Player {...gameInfo.player}
+                    deck={gameState.playerDeck}
+                    gameStatus={gameState.gameStatus}
+                    isMyTurn={gameState.currentTurn === 4}
+                />
             </div>
             {message &&
                 <div className="message">
@@ -110,11 +114,10 @@ export default function App(props: { random: Random }) {
 
     function handleTurnEnd(result: TurnResult) {
         const cpuDeck = gameState.cpuDeck[gameState.currentTurn];
-        const nextTurn = gameState.currentTurn === 4 ? 0 : gameState.currentTurn + 1;
         if (result.action === "pass") {
             setGameState({
                 ...gameState,
-                currentTurn: nextTurn
+                currentTurn: getNextTurn()
             });
         } else {
             const newDeck = cpuDeck.filter(x => !result.discards.includes(x));
@@ -124,7 +127,6 @@ export default function App(props: { random: Random }) {
             });
             setGameState({
                 ...gameState,
-                currentTurn: nextTurn,
                 stack: gameState.stack,
                 cpuDeck: gameState.cpuDeck.map((d, i) => i === gameState.currentTurn ? newDeck : d),
             });
@@ -136,8 +138,13 @@ export default function App(props: { random: Random }) {
             setGameState({
                 ...gameState,
                 stack: [discarding.cards, ...gameState.stack],
+                currentTurn: getNextTurn()
             });
             setDiscarding(undefined);
         }
+    }
+
+    function getNextTurn() {
+        return gameState.currentTurn === 4 ? 0 : gameState.currentTurn + 1;
     }
 }

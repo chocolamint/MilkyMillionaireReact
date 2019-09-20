@@ -7,6 +7,7 @@ import { GameStatus } from "../models/Game";
 export interface PlayerProps {
     rank: "大富豪" | "富豪" | "平民" | "貧民" | "大貧民";
     deck: readonly Card[];
+    isMyTurn: boolean;
     gameStatus: GameStatus;
 }
 
@@ -43,6 +44,9 @@ export default function Player(props: PlayerProps) {
     );
 
     function handleCardClick(card: Card) {
+
+        if (!props.isMyTurn) return;
+
         if (stagings.includes(card)) {
             setStagings(stagings.filter(x => x !== card));
         } else {
