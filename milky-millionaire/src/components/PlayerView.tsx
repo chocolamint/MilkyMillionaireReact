@@ -42,8 +42,11 @@ export default function Player(props: Readonly<PlayerProps>) {
                     stagings.includes(card) && classNames.push("staging");
 
                     return (
-                        <div className={classNames.join(" ")} onClick={() => handleCardClick(card)}>
-                            <CardView card={card} disabled={props.isMyTurn && !canStage(card)} />
+                        <div className={classNames.join(" ")}>
+                            <CardView card={card}
+                                disabled={props.isMyTurn && !canStage(card)}
+                                onClick={handleCardClick}
+                            />
                         </div>
                     );
                 })}
@@ -58,7 +61,6 @@ export default function Player(props: Readonly<PlayerProps>) {
     function handleCardClick(card: Card) {
 
         if (!props.isMyTurn) return;
-        if (!canStage(card)) return;
 
         if (stagings.includes(card)) {
             setStagings(stagings.filter(x => x !== card));

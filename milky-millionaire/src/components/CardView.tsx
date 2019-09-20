@@ -5,6 +5,7 @@ import { Card } from "../models/Card";
 export interface CardViewProps {
     card: Card;
     disabled?: boolean;
+    onClick?: (card: Card) => void;
 }
 
 export default function (props: Readonly<CardViewProps>) {
@@ -14,7 +15,7 @@ export default function (props: Readonly<CardViewProps>) {
     props.disabled && classes.push("disabled");
 
     return (
-        <div className={classes.join(" ")}>
+        <div className={classes.join(" ")} onClick={handleClick}>
             {card.joker ?
                 <div>
                     <span>Joker</span>
@@ -47,4 +48,9 @@ export default function (props: Readonly<CardViewProps>) {
             }
         </div>
     );
+
+    function handleClick() {
+        if (props.disabled) return;
+        props.onClick && props.onClick(props.card);
+    }
 }
