@@ -2,6 +2,7 @@ import React from "react";
 import { GameState } from "../models/Game";
 import CardView from "./CardView";
 import { cardToString, Card } from "../models/Card";
+import "./Board.scss";
 
 interface BoardProps {
     gameState: GameState;
