@@ -1,11 +1,11 @@
 import { Card } from "./models/Card";
 
 export const START_GAME = 'START_GAME';
-export const DISCARD = 'DISCARD';
+export const DISCARD_STARTED = 'DISCARD_STARTED';
+export const DISCARD_DONE = 'DISCARD_DONE';
 export const PASS = 'PASS';
-export const END_DISCARDING = 'END_DISCARDING';
-export const GO_TO_NEXT_TRICK = 'GO_TO_NEXT_TRICK';
-export const GONE_TO_NEXT_TRICK = 'GONE_TO_NEXT_TRICK';
+export const GO_TO_NEXT_TRICK_STARTED = 'GO_TO_NEXT_TRICK_STARTED';
+export const GO_TO_NEXT_TRICK_DONE = 'GO_TO_NEXT_TRICK_DONE';
 
 export interface StartGameAction {
     type: typeof START_GAME,
@@ -14,26 +14,26 @@ export interface StartGameAction {
         initialTurn: number,
     }
 }
-export interface DiscardAction {
-    type: typeof DISCARD,
+export interface DiscardStartedAction {
+    type: typeof DISCARD_STARTED,
     payload: {
         cards: Card[]
     }
 }
+export interface DiscardDoneAction {
+    type: typeof DISCARD_DONE
+}
 export interface PassAction {
     type: typeof PASS,
 }
-export interface EndDiscardingAction {
-    type: typeof END_DISCARDING
+export interface GoToNextTrickStartedAction {
+    type: typeof GO_TO_NEXT_TRICK_STARTED
 }
-export interface GoToNextTrickAction {
-    type: typeof GO_TO_NEXT_TRICK
-}
-export interface GoneToNextTrickAction {
-    type: typeof GONE_TO_NEXT_TRICK
+export interface GoToNextTrickDoneAction {
+    type: typeof GO_TO_NEXT_TRICK_DONE
 }
 
-export type ActionTypes = StartGameAction | DiscardAction | PassAction | EndDiscardingAction | GoToNextTrickAction | GoneToNextTrickAction;
+export type ActionTypes = StartGameAction | DiscardStartedAction | PassAction | DiscardDoneAction | GoToNextTrickStartedAction | GoToNextTrickDoneAction;
 
 export function startGame(decks: Card[][], initialTurn: number): StartGameAction {
     return {
@@ -44,12 +44,17 @@ export function startGame(decks: Card[][], initialTurn: number): StartGameAction
         }
     };
 }
-export function discard(cards: Card[]): DiscardAction {
+export function discardStarted(cards: Card[]): DiscardStartedAction {
     return {
-        type: DISCARD,
+        type: DISCARD_STARTED,
         payload: {
             cards
         }
+    };
+}
+export function discardDone(): DiscardDoneAction {
+    return {
+        type: DISCARD_DONE
     };
 }
 export function pass(): PassAction {
@@ -57,18 +62,13 @@ export function pass(): PassAction {
         type: PASS
     };
 }
-export function endDiscarding(): EndDiscardingAction {
+export function goToNextTrickStarted(): GoToNextTrickStartedAction {
     return {
-        type: END_DISCARDING
+        type: GO_TO_NEXT_TRICK_STARTED
     };
 }
-export function goToNextTrick(): GoToNextTrickAction {
+export function goToNextTrickDone(): GoToNextTrickDoneAction {
     return {
-        type: GO_TO_NEXT_TRICK
-    };
-}
-export function goneToNextTrick(): GoneToNextTrickAction {
-    return {
-        type: GONE_TO_NEXT_TRICK
+        type: GO_TO_NEXT_TRICK_DONE
     };
 }

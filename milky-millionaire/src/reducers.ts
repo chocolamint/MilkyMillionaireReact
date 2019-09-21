@@ -1,5 +1,5 @@
 import { GameStatus } from "./models/Game";
-import { DISCARD, ActionTypes as Actions, PASS, START_GAME, GO_TO_NEXT_TRICK, END_DISCARDING, GONE_TO_NEXT_TRICK } from "./actions";
+import { DISCARD_STARTED, ActionTypes as Actions, PASS, START_GAME, GO_TO_NEXT_TRICK_STARTED, DISCARD_DONE, GO_TO_NEXT_TRICK_DONE } from "./actions";
 import { Card } from "./models/Card";
 import { AppState } from "./states";
 
@@ -23,7 +23,7 @@ export function reducer(state: AppState | undefined = initialState, action: Acti
                 decks: action.payload.decks,
                 currentTurn: action.payload.initialTurn
             };
-        case DISCARD:
+        case DISCARD_STARTED:
             const deck = state.decks[state.currentTurn];
             const newDeck = deck.filter(x => !action.payload.cards.includes(x));
             return {
@@ -36,6 +36,13 @@ export function reducer(state: AppState | undefined = initialState, action: Acti
                     by: state.currentTurn,
                     cards: action.payload.cards
                 }
+            };
+        case DISCARD_DONE:
+            return {
+                ...state,
+                stack: [state.discarding!.cards, ...state.stack],
+                currentTurn: getNextTurn(state.decks, state.currentTurn, state.lastDiscard, state.isTrickEnding),
+                discarding: undefined
             };
         case PASS:
             const passCount = state.passCount + 1;
@@ -51,19 +58,12 @@ export function reducer(state: AppState | undefined = initialState, action: Acti
                     passCount
                 };
             }
-        case END_DISCARDING:
-            return {
-                ...state,
-                stack: [state.discarding!.cards, ...state.stack],
-                currentTurn: getNextTurn(state.decks, state.currentTurn, state.lastDiscard, state.isTrickEnding),
-                discarding: undefined
-            };
-        case GO_TO_NEXT_TRICK:
+        case GO_TO_NEXT_TRICK_STARTED:
             return {
                 ...state,
                 isTrickEnding: true
             };
-        case GONE_TO_NEXT_TRICK:
+        case GO_TO_NEXT_TRICK_DONE:
             return {
                 ...state,
                 stack: [],

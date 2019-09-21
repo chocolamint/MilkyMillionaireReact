@@ -6,7 +6,7 @@ import { GameStatus, Random, shuffle, deal } from './models/Game';
 import { allCards, Card } from './models/Card';
 import gameInfo from './GameInfo';
 import Board from './components/Board';
-import { goToNextTrick, endDiscarding, startGame, ActionTypes, goneToNextTrick } from './actions';
+import { goToNextTrickStarted, discardDone, startGame, ActionTypes, goToNextTrickDone } from './actions';
 import { connect } from 'react-redux';
 import { AppState } from './states';
 
@@ -73,9 +73,9 @@ function mapStateToProps(state: AppState) {
 function mapDispatchToProps(dispatch: Dispatch<ActionTypes>) {
     return {
         startGame: (decks: Card[][], initialTurn: number) => dispatch(startGame(decks, initialTurn)),
-        endDiscarding: () => dispatch(endDiscarding()),
-        goToNextTrick: () => dispatch(goToNextTrick()),
-        goneToNextTrick: () => dispatch(goneToNextTrick())
+        endDiscarding: () => dispatch(discardDone()),
+        goToNextTrick: () => dispatch(goToNextTrickStarted()),
+        goneToNextTrick: () => dispatch(goToNextTrickDone())
     };
 }
 

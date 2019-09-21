@@ -6,7 +6,7 @@ import { GameStatus } from "../models/Game";
 import { Rule } from "../models/Rule";
 import PlayerButton from "./PlayerButton";
 import { connect } from "react-redux";
-import { pass, ActionTypes, discard } from "../actions";
+import { pass, ActionTypes, discardStarted } from "../actions";
 import { AppState } from "../states";
 
 interface OwnProps {
@@ -102,7 +102,7 @@ function mapStateToProps(state: AppState) {
 
 function mapDispatchToProps(dispatch: Dispatch<ActionTypes>) {
     return {
-        discard: (cards: Card[]) => dispatch(discard(cards)),
+        discard: (cards: Card[]) => dispatch(discardStarted(cards)),
         pass: () => dispatch(pass())
     };
 }

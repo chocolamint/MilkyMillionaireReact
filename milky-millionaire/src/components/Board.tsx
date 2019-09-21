@@ -2,7 +2,7 @@ import React, { Dispatch } from "react";
 import CardView from "./CardView";
 import { cardToString } from "../models/Card";
 import "./Board.scss";
-import { goneToNextTrick, ActionTypes, endDiscarding } from "../actions";
+import { goToNextTrickDone, ActionTypes, discardDone } from "../actions";
 import { connect } from "react-redux";
 import { AppState } from "../states";
 
@@ -15,7 +15,7 @@ type BoardProps = OwnProps & ReturnType<typeof mapStateToProps> & ReturnType<typ
 function Board(props: Readonly<BoardProps>) {
     return (
         <div className="board">
-            <div className={`discarded ${props.isTrickEnding ? "next-trick" : ""}`} onAnimationEnd={props.goneToNextTrick}>
+            <div className={`discarded ${props.isTrickEnding ? "next-trick" : ""}`} onAnimationEnd={props.endSwipeAnimation}>
                 {props.stack.map(cards =>
                     <div className="card-set" key={`discarded-set-${cards.map(cardToString).join("-")}`}>
                         {cards.map(card =>
@@ -27,7 +27,7 @@ function Board(props: Readonly<BoardProps>) {
                 )}
             </div>
             {props.discarding &&
-                <div className={`discardings discardings-${props.discarding.by}`} onAnimationEnd={props.endDiscarding}>
+                <div className={`discardings discardings-${props.discarding.by}`} onAnimationEnd={props.endDiscardAnimation}>
                     <div className="card-set">
                         {props.discarding.cards.map(card =>
                             <div className="card-container" key={`discardings-card-${cardToString(card)}`}>
@@ -51,8 +51,8 @@ function mapStateToProps(state: AppState) {
 
 function mapDispatchToProps(dispatch: Dispatch<ActionTypes>) {
     return {
-        goneToNextTrick: () => dispatch(goneToNextTrick()),
-        endDiscarding: () => dispatch(endDiscarding())
+        endSwipeAnimation: () => dispatch(goToNextTrickDone()),
+        endDiscardAnimation: () => dispatch(discardDone())
     };
 }
 
