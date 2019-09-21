@@ -3,14 +3,10 @@ import './App.scss';
 import CPUView from './components/CPUView';
 import CardView from './components/CardView';
 import Player from './components/PlayerView';
-import { GameStatus, Random, shuffle, deal, TurnResult } from './models/Game';
-import { allCards, Card, cardToString } from './models/Card';
+import { GameStatus, Random, shuffle, deal, TurnResult, GameState } from './models/Game';
+import { allCards, Card } from './models/Card';
 import gameInfo from './GameInfo';
-
-interface DiscardedCards {
-    by: number;
-    cards: Card[];
-}
+import Board, { DiscardedCards } from './components/Board';
 
 export default function App(props: { random: Random }) {
 
@@ -26,7 +22,7 @@ export default function App(props: { random: Random }) {
         stack: [] as Card[][],
         passCount: 0,
         lastDiscard: undefined as number | undefined
-    });
+    } as GameState);
     const [discarding, setDiscarding] = useState(undefined as DiscardedCards | undefined);
     const [isTrickEnding, setIsTrickEnding] = useState(false);
 
@@ -49,30 +45,7 @@ export default function App(props: { random: Random }) {
                         );
                     })}
                 </ul>
-                <div className="board">
-                    <div className={`discarded ${isTrickEnding ? "next-trick" : ""}`} onAnimationEnd={goToNextTrick}>
-                        {gameState.stack.map(cards =>
-                            <div className="card-set" key={`discarded-set-${cards.map(cardToString).join("-")}`}>
-                                {cards.map(card =>
-                                    <div className="card-container" key={`discarded-card-${cardToString(card)}`}>
-                                        <CardView card={card} />
-                                    </div>
-                                )}
-                            </div>
-                        )}
-                    </div>
-                    {discarding &&
-                        <div className={`discardings discardings-${discarding.by}`} onAnimationEnd={handleAnimationEnd}>
-                            <div className="card-set">
-                                {discarding.cards.map(card =>
-                                    <div className="card-container" key={`discardings-card-${cardToString(card)}`}>
-                                        <CardView card={card} />
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                    }
-                </div>
+                <Board gameState={gameState} discarding={discarding} isTrickEnding={isTrickEnding} onDiscardingEnd={handleDiscardingEnd} onGoToNextTrick={handleGoToNextTrick} />
                 <Player {...gameInfo.player}
                     stackTop={gameState.stack[0]}
                     deck={gameState.decks[4]}
@@ -97,7 +70,7 @@ export default function App(props: { random: Random }) {
             !isTrickEnding;
     }
 
-    function goToNextTrick() {
+    function handleGoToNextTrick() {
         const nextTurn = getNextTurn();
         setIsTrickEnding(false);
         setGameState({
@@ -138,7 +111,7 @@ export default function App(props: { random: Random }) {
         }
     }
 
-    function handleAnimationEnd() {
+    function handleDiscardingEnd() {
         if (discarding !== undefined) {
             setGameState({
                 ...gameState,

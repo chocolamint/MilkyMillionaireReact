@@ -8,10 +8,11 @@ export enum GameStatus {
 
 export interface GameState {
     gameStatus: GameStatus;
-    cpuDeck: Card[][];
+    decks: Card[][];
     currentTurn: number;
     stack: Card[][];
-    playerDeck: Card[]
+    passCount: number;
+    lastDiscard: number | undefined;
 }
 
 export type TurnResult = {
