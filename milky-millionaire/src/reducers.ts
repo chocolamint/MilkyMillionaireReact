@@ -1,5 +1,5 @@
 import { GameStatus } from "./models/Game";
-import { DISCARD_STARTED, ActionTypes as Actions, PASS, START_GAME, GO_TO_NEXT_TRICK_STARTED, DISCARD_DONE, GO_TO_NEXT_TRICK_DONE } from "./actions";
+import { DISCARD_STARTED, ActionTypes as Actions, PASS_STARTED, START_GAME, GO_TO_NEXT_TRICK_STARTED, DISCARD_DONE, GO_TO_NEXT_TRICK_DONE, PASS_DONE } from "./actions";
 import { Card } from "./models/Card";
 import { AppState } from "./states";
 
@@ -10,6 +10,7 @@ const initialState: AppState = {
     stack: [] as Card[][],
     passCount: 0,
     lastDiscard: undefined as number | undefined,
+    isPassing: false,
     isTrickEnding: false,
     discarding: undefined
 };
@@ -44,18 +45,25 @@ export function reducer(state: AppState | undefined = initialState, action: Acti
                 currentTurn: getNextTurn(state.decks, state.currentTurn, state.lastDiscard, state.isTrickEnding),
                 discarding: undefined
             };
-        case PASS:
+        case PASS_STARTED:
+            return {
+                ...state,
+                isPassing: true
+            };
+        case PASS_DONE:
             const passCount = state.passCount + 1;
             if (passCount === 4) {
                 return {
                     ...state,
-                    isTrickEnding: true
+                    isTrickEnding: true,
+                    isPassing: false
                 };
             } else {
                 return {
                     ...state,
                     currentTurn: getNextTurn(state.decks, state.currentTurn, state.lastDiscard, state.isTrickEnding),
-                    passCount
+                    passCount,
+                    isPassing: true
                 };
             }
         case GO_TO_NEXT_TRICK_STARTED:

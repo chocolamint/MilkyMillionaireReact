@@ -5,6 +5,15 @@
     position: relative;
 
     &.pass {
+
+        animation: 500ms dummy;
+
+        @keyframes dummy {
+            from {}
+
+            to {}
+        }
+
         @mixin pass() {
             position: absolute;
             color: #ffffff;

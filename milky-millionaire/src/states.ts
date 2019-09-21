@@ -13,6 +13,7 @@ export interface AppState {
     stack: Card[][];
     passCount: number;
     lastDiscard: number | undefined;
+    isPassing: boolean;
     isTrickEnding: boolean;
     discarding: DiscardedCards | undefined;
 }

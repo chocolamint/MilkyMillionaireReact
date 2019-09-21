@@ -4,7 +4,7 @@ import { Card, cardToString } from "../models/Card";
 import { Random } from "../models/Game";
 import { turnCPU } from "../models/CPU";
 import { connect } from "react-redux";
-import { discardStarted, pass, ActionTypes } from "../actions";
+import { discardStarted, passStarted, ActionTypes, passDone } from "../actions";
 import { AppState } from "../states";
 
 interface OwnProps {
@@ -22,24 +22,19 @@ type CPUViewProps = OwnProps & ReturnType<typeof mapStateToProps> & ReturnType<t
 
 function CPUView(props: CPUViewProps) {
 
-    const [isPassing, setIsPassing] = useState(false);
+    const isPassing = props.isPassing && props.isMyTurn;
 
     if (props.isMyTurn && !isPassing) {
         const result = turnCPU(props.stackTop, props.cards, props.random);
         if (result.action === "discard") {
             props.discard(result.discards);
         } else {
-            setIsPassing(true);
-            setTimeout(() => {
-                // TODO: onAnimationEnd でやる
-                props.pass();
-                setIsPassing(false);
-            }, 500);
+            props.pass();
         }
     }
 
     return (
-        <div className={`cpu ${isPassing ? "pass" : ""} ${props.cards.length === 0 ? "clear" : ""}`}>
+        <div className={`cpu ${isPassing ? "pass" : ""} ${props.cards.length === 0 ? "clear" : ""}`} onAnimationEnd={props.endPass}>
             <div className="name">
                 {props.name}
             </div>
@@ -56,13 +51,16 @@ function CPUView(props: CPUViewProps) {
 }
 
 function mapStateToProps(state: AppState) {
-    return {};
+    return {
+        isPassing: state.isPassing
+    };
 }
 
 function mapDispatchToProps(dispatch: Dispatch<ActionTypes>) {
     return {
         discard: (cards: Card[]) => dispatch(discardStarted(cards)),
-        pass: () => dispatch(pass())
+        pass: () => dispatch(passStarted()),
+        endPass: () => dispatch(passDone())
     };
 }
 
