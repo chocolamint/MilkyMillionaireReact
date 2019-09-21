@@ -1,11 +1,10 @@
 import React from "react";
-import { GameState } from "../models/Game";
 import CardView from "./CardView";
 import { cardToString, Card } from "../models/Card";
 import "./Board.scss";
 
 interface BoardProps {
-    gameState: GameState;
+    stack: Card[][];
     discarding: DiscardedCards | undefined;
     isTrickEnding: boolean;
     onGoToNextTrick: () => void;
@@ -21,7 +20,7 @@ export default function Board(props: Readonly<BoardProps>) {
     return (
         <div className="board">
             <div className={`discarded ${props.isTrickEnding ? "next-trick" : ""}`} onAnimationEnd={handleNextTrickAnimationEnd}>
-                {props.gameState.stack.map(cards =>
+                {props.stack.map(cards =>
                     <div className="card-set" key={`discarded-set-${cards.map(cardToString).join("-")}`}>
                         {cards.map(card =>
                             <div className="card-container" key={`discarded-card-${cardToString(card)}`}>

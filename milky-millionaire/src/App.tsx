@@ -7,26 +7,29 @@ import { allCards, Card } from './models/Card';
 import gameInfo from './GameInfo';
 import Board from './components/Board';
 import { AppState } from './reducers';
-import { goToNextTrick, endDiscarding, startGame, ActionTypes } from './actions';
+import { goToNextTrick, endDiscarding, startGame, ActionTypes, goneToNextTrick } from './actions';
 import { connect } from 'react-redux';
 
 interface OwnProps {
     random: Random;
 }
 
+type OwnState = Pick<AppState, "gameStatus" | "decks" | "stack" | "discarding" | "isTrickEnding" | "currentTurn">;
+
 interface OwnActions {
     startGame: (decks: Card[][], initialTurn: number) => void;
     endDiscarding: () => void;
     goToNextTrick: () => void;
+    goneToNextTrick: () => void;
 }
 
-type AppProps = OwnProps & AppState & OwnActions;
+type AppProps = OwnProps & OwnState & OwnActions;
 
 function App(props: AppProps) {
 
     const { random } = props;
 
-    if (props.gameState.gameStatus === GameStatus.Init) {
+    if (props.gameStatus === GameStatus.Init) {
         const cards = shuffle(allCards, random);
         const dealCards = shuffle(deal(cards, 5), random);
         const initialTurn = random.next(5);
@@ -43,19 +46,25 @@ function App(props: AppProps) {
                             <li className="cpu" key={`cpu-${i}`}>
                                 <CPUView {...cpu}
                                     isMyTurn={isYourTurn(i)}
-                                    cards={props.gameState.decks[i]}
-                                    stackTop={props.gameState.stack[0]}
+                                    cards={props.decks[i]}
+                                    stackTop={props.stack[0]}
                                     random={random}
                                 />
                             </li>
                         );
                     })}
                 </ul>
-                <Board gameState={props.gameState} discarding={props.discarding} isTrickEnding={props.isTrickEnding} onDiscardingEnd={handleDiscardingEnd} onGoToNextTrick={handleGoToNextTrick} />
+                <Board
+                    stack={props.stack}
+                    discarding={props.discarding}
+                    isTrickEnding={props.isTrickEnding}
+                    onDiscardingEnd={handleDiscardingEnd}
+                    onGoToNextTrick={handleGoToNextTrick}
+                />
                 <PlayerView {...gameInfo.player}
-                    stackTop={props.gameState.stack[0]}
-                    deck={props.gameState.decks[4]}
-                    gameStatus={props.gameState.gameStatus}
+                    stackTop={props.stack[0]}
+                    deck={props.decks[4]}
+                    gameStatus={props.gameStatus}
                     isMyTurn={isYourTurn(4)}
                 />
             </div>
@@ -63,13 +72,13 @@ function App(props: AppProps) {
     );
 
     function isYourTurn(position: number) {
-        return props.gameState.currentTurn === position &&
+        return props.currentTurn === position &&
             props.discarding === undefined &&
             !props.isTrickEnding;
     }
 
     function handleGoToNextTrick() {
-        props.goToNextTrick();
+        props.goneToNextTrick();
     }
 
     function handleDiscardingEnd() {
@@ -82,11 +91,15 @@ export default connect(
     (state: AppProps) => ({
         discarding: state.discarding,
         isTrickEnding: state.isTrickEnding,
-        gameState: state.gameState
+        gameStatus: state.gameStatus,
+        decks: state.decks,
+        stack: state.stack,
+        currentTurn: state.currentTurn
     }),
     (dispatch: Dispatch<ActionTypes>) => ({
         startGame: (decks: Card[][], initialTurn: number) => dispatch(startGame(decks, initialTurn)),
         endDiscarding: () => dispatch(endDiscarding()),
-        goToNextTrick: () => dispatch(goToNextTrick())
+        goToNextTrick: () => dispatch(goToNextTrick()),
+        goneToNextTrick: () => dispatch(goneToNextTrick())
     })
 )(App);

@@ -7,15 +7,6 @@ export enum GameStatus {
     Trading
 }
 
-export interface GameState {
-    gameStatus: GameStatus;
-    decks: Card[][];
-    currentTurn: number;
-    stack: Card[][];
-    passCount: number;
-    lastDiscard: number | undefined;
-}
-
 export type TurnResult = {
     action: "discard",
     discards: Card[]

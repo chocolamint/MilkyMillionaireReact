@@ -1,14 +1,13 @@
 import React, { useState, Dispatch } from "react";
 import "./CPUView.scss";
 import { Card, cardToString } from "../models/Card";
-import { Random, GameState } from "../models/Game";
+import { Random } from "../models/Game";
 import { turnCPU } from "../models/CPU";
 import { connect } from "react-redux";
 import { discard, pass, ActionTypes } from "../actions";
 import { AppState } from "../reducers";
 
 interface OwnProps {
-    gameState: GameState;
     imageFileName: any;
     bgColor: string | undefined;
     color: string | undefined;
@@ -19,12 +18,14 @@ interface OwnProps {
     random: Random;
 }
 
+type OwnState = {};
+
 interface CPUActions {
     discard: (cards: Card[]) => void;
     pass: () => void;
 }
 
-type CPUViewProps = OwnProps & CPUActions & AppState;
+type CPUViewProps = OwnProps & OwnState & CPUActions;
 
 function CPUView(props: CPUViewProps) {
 
@@ -62,11 +63,7 @@ function CPUView(props: CPUViewProps) {
 }
 
 export default connect(
-    (state: CPUViewProps) => ({
-        gameState: state.gameState,
-        isTrickEnding: state.isTrickEnding,
-        discarding: state.discarding
-    }),
+    (state: CPUViewProps) => ({}),
     (dispatch: Dispatch<ActionTypes>) => ({
         discard: (cards: Card[]) => dispatch(discard(cards)),
         pass: () => dispatch(pass())

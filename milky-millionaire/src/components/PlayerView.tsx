@@ -2,10 +2,9 @@ import React, { useState, Dispatch } from "react";
 import "./PlayerView.scss";
 import CardView from "./CardView";
 import { Card, cardToString } from "../models/Card";
-import { GameStatus, TurnResult } from "../models/Game";
+import { GameStatus } from "../models/Game";
 import { Rule } from "../models/Rule";
 import PlayerButton from "./PlayerButton";
-import { AppState } from "../reducers";
 import { connect } from "react-redux";
 import { pass, ActionTypes, discard } from "../actions";
 
@@ -21,7 +20,7 @@ interface PlayerActions {
     pass: () => void;
 }
 
-type PlayerViewProps = OwnProps & AppState & PlayerActions;
+type PlayerViewProps = OwnProps & {} & PlayerActions;
 
 function PlayerView(props: Readonly<PlayerViewProps>) {
 
@@ -101,9 +100,6 @@ function PlayerView(props: Readonly<PlayerViewProps>) {
 
 export default connect(
     (state: PlayerViewProps) => ({
-        gameState: state.gameState,
-        isTrickEnding: state.isTrickEnding,
-        discarding: state.discarding
     }),
     (dispatch: Dispatch<ActionTypes>) => ({
         discard: (cards: Card[]) => dispatch(discard(cards)),
