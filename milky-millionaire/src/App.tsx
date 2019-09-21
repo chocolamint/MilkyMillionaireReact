@@ -1,29 +1,37 @@
-import React, { useState } from 'react';
+import React, { Dispatch } from 'react';
 import './App.scss';
 import CPUView from './components/CPUView';
 import Player from './components/PlayerView';
-import { GameStatus, Random, shuffle, deal, TurnResult, GameState } from './models/Game';
+import { GameStatus, Random, shuffle, deal } from './models/Game';
 import { allCards, Card } from './models/Card';
 import gameInfo from './GameInfo';
-import Board, { DiscardedCards } from './components/Board';
+import Board from './components/Board';
+import { AppState } from './reducers';
+import { goToNextTrick, endDiscarding, startGame, ActionTypes } from './actions';
+import { connect } from 'react-redux';
 
-export default function App(props: { random: Random }) {
+interface OwnProps {
+    random: Random;
+}
+
+interface OwnActions {
+    startGame: (decks: Card[][], initialTurn: number) => void;
+    endDiscarding: () => void;
+    goToNextTrick: () => void;
+}
+
+type AppProps = OwnProps & AppState & OwnActions;
+
+function App(props: AppProps) {
 
     const { random } = props;
-    const cards = shuffle(allCards, random);
-    const dealCards = shuffle(deal(cards, 5), random);
-    const currentTurn = random.next(5);
 
-    const [gameState, setGameState] = useState({
-        gameStatus: GameStatus.Playing,
-        decks: dealCards,
-        currentTurn,
-        stack: [] as Card[][],
-        passCount: 0,
-        lastDiscard: undefined as number | undefined
-    } as GameState);
-    const [discarding, setDiscarding] = useState(undefined as DiscardedCards | undefined);
-    const [isTrickEnding, setIsTrickEnding] = useState(false);
+    if (props.gameState.gameStatus === GameStatus.Init) {
+        const cards = shuffle(allCards, random);
+        const dealCards = shuffle(deal(cards, 5), random);
+        const initialTurn = random.next(5);
+        props.startGame(dealCards, initialTurn);
+    }
 
     return (
         <div className="main">
@@ -38,11 +46,11 @@ export default function App(props: { random: Random }) {
                         );
                     })}
                 </ul>
-                <Board gameState={gameState} discarding={discarding} isTrickEnding={isTrickEnding} onDiscardingEnd={handleDiscardingEnd} onGoToNextTrick={handleGoToNextTrick} />
+                <Board gameState={props.gameState} discarding={props.discarding} isTrickEnding={props.isTrickEnding} onDiscardingEnd={handleDiscardingEnd} onGoToNextTrick={handleGoToNextTrick} />
                 <Player {...gameInfo.player}
-                    stackTop={gameState.stack[0]}
-                    deck={gameState.decks[4]}
-                    gameStatus={gameState.gameStatus}
+                    stackTop={props.gameState.stack[0]}
+                    deck={props.gameState.decks[4]}
+                    gameStatus={props.gameState.gameStatus}
                     isMyTurn={isYourTurn(4)}
                     onTurnEnd={() => { }}
                 />
@@ -51,51 +59,26 @@ export default function App(props: { random: Random }) {
     );
 
     function isYourTurn(position: number) {
-        return gameState.currentTurn === position &&
-            discarding === undefined &&
-            !isTrickEnding;
+        return props.gameState.currentTurn === position &&
+            props.discarding === undefined &&
+            !props.isTrickEnding;
     }
 
     function handleGoToNextTrick() {
-        const nextTurn = getNextTurn();
-        setIsTrickEnding(false);
-        setGameState({
-            ...gameState,
-            stack: [],
-            currentTurn: nextTurn,
-            passCount: 0,
-            lastDiscard: undefined
-        });
+        props.goToNextTrick();
     }
 
     function handleDiscardingEnd() {
-        if (discarding !== undefined) {
-            setGameState({
-                ...gameState,
-                stack: [discarding.cards, ...gameState.stack],
-                currentTurn: getNextTurn()
-            });
-            setDiscarding(undefined);
-        }
+        props.endDiscarding();
     }
 
-    function getNextTurn() {
-
-        let p = isTrickEnding ?
-            gameState.lastDiscard! :
-            nextPosition(gameState.currentTurn);
-
-        while (true) {
-            if (!isCleared(p)) return p;
-            p = nextPosition(p);
-        }
-
-        function nextPosition(pos: number) {
-            return pos === 4 ? 0 : pos + 1;
-        }
-    }
-
-    function isCleared(position: number) {
-        return gameState.decks[position].length === 0;
-    }
 }
+
+export default connect(
+    (state: AppProps) => state,
+    (dispatch: Dispatch<ActionTypes>) => ({
+        startGame: (decks: Card[][], initialTurn: number) => dispatch(startGame(decks, initialTurn)),
+        endDiscarding: () => dispatch(endDiscarding()),
+        goToNextTrick: () => dispatch(goToNextTrick())
+    })
+)(App);

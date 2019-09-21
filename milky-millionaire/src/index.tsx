@@ -12,7 +12,7 @@ const Store = createStore(reducer);
 
 ReactDOM.render(
     <Provider store={Store}>
-        <App random={newRandom(0)} />
+        <App />
     </Provider>,
     document.getElementById('root')
 );

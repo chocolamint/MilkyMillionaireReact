@@ -1,6 +1,7 @@
 import { Card } from "./Card";
 
 export enum GameStatus {
+    Init,
     Playing,
     GameSet,
     Trading
