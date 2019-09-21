@@ -32,12 +32,8 @@ export default function App(props: { random: Random }) {
                     {gameInfo.cpus.map((cpu, i) => {
                         return (
                             <li className="cpu" key={`cpu-${i}`}>
-                                <CPUView {...cpu}
-                                    isMyTurn={isYourTurn(i)}
-                                    cards={gameState.decks[i]}
-                                    stackTop={gameState.stack[0]}
-                                    random={random}
-                                    onTurnEnd={handleTurnEnd} />
+                                <CPUView
+                                />
                             </li>
                         );
                     })}
@@ -48,7 +44,7 @@ export default function App(props: { random: Random }) {
                     deck={gameState.decks[4]}
                     gameStatus={gameState.gameStatus}
                     isMyTurn={isYourTurn(4)}
-                    onTurnEnd={handleTurnEnd}
+                    onTurnEnd={() => { }}
                 />
             </div>
         </div>
@@ -70,35 +66,6 @@ export default function App(props: { random: Random }) {
             passCount: 0,
             lastDiscard: undefined
         });
-    }
-
-    function handleTurnEnd(result: TurnResult) {
-        const deck = gameState.decks[gameState.currentTurn];
-        if (result.action === "pass") {
-            const passCount = gameState.passCount + 1;
-            if (passCount === 4) {
-                setIsTrickEnding(true);
-            } else {
-                setGameState({
-                    ...gameState,
-                    currentTurn: getNextTurn(),
-                    passCount
-                });
-            }
-        } else {
-            const newDeck = deck.filter(x => !result.discards.includes(x));
-            setDiscarding({
-                by: gameState.currentTurn,
-                cards: result.discards
-            });
-            setGameState({
-                ...gameState,
-                stack: gameState.stack,
-                decks: gameState.decks.map((d, i) => i === gameState.currentTurn ? newDeck : d),
-                lastDiscard: gameState.currentTurn,
-                passCount: 0
-            });
-        }
     }
 
     function handleDiscardingEnd() {

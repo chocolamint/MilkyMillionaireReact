@@ -1,10 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, Dispatch } from "react";
 import "./CPUView.scss";
 import { Card, cardToString } from "../models/Card";
-import { Random, TurnResult } from "../models/Game";
+import { Random, GameState } from "../models/Game";
 import { turnCPU } from "../models/CPU";
+import { connect } from "react-redux";
+import { discard, pass, ActionTypes } from "../actions";
+import { AppState } from "../reducers";
 
-export interface CPUProps {
+interface OwnProps {
+    gameState: GameState;
     imageFileName: any;
     bgColor: string | undefined;
     color: string | undefined;
@@ -13,21 +17,28 @@ export interface CPUProps {
     cards: readonly Card[];
     stackTop: Card[] | undefined;
     random: Random;
-    onTurnEnd: (result: TurnResult) => void;
 }
 
-export default function CPU(props: CPUProps) {
+interface CPUActions {
+    discard: (cards: Card[]) => void;
+    pass: () => void;
+}
+
+type CPUViewProps = OwnProps & CPUActions & AppState;
+
+function CPUView(props: CPUViewProps) {
 
     const [isPassing, setIsPassing] = useState(false);
 
     if (props.isMyTurn && !isPassing) {
         const result = turnCPU(props.stackTop, props.cards, props.random);
         if (result.action === "discard") {
-            props.onTurnEnd(result);
+            props.discard(result.discards);
         } else {
             setIsPassing(true);
             setTimeout(() => {
-                props.onTurnEnd({ action: "pass" });
+                // TODO: onAnimationEnd でやる
+                props.pass();
                 setIsPassing(false);
             }, 500);
         }
@@ -49,3 +60,11 @@ export default function CPU(props: CPUProps) {
         </div>
     );
 }
+
+export default connect(
+    (state: CPUViewProps) => state,
+    (dispatch: Dispatch<ActionTypes>) => ({
+        discard: (cards: Card[]) => dispatch(discard(cards)),
+        pass: () => dispatch(pass())
+    })
+)(CPUView);
