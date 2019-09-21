@@ -11,10 +11,7 @@ import { AppState } from "../reducers";
 
 interface OwnProps {
     rank: "大富豪" | "富豪" | "平民" | "貧民" | "大貧民";
-    stackTop: readonly Card[];
-    deck: readonly Card[];
     isMyTurn: boolean;
-    gameStatus: GameStatus;
 }
 
 type PlayerViewProps = OwnProps & ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps>;
@@ -96,7 +93,11 @@ function PlayerView(props: Readonly<PlayerViewProps>) {
 }
 
 function mapStateToProps(state: AppState) {
-    return {};
+    return {
+        gameStatus: state.gameStatus,
+        stackTop: state.stack[0],
+        deck: state.decks[state.decks.length - 1]
+    };
 }
 
 function mapDispatchToProps(dispatch: Dispatch<ActionTypes>) {

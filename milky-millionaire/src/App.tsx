@@ -47,9 +47,6 @@ function App(props: AppProps) {
                 </ul>
                 <Board />
                 <PlayerView {...gameInfo.player}
-                    stackTop={props.stack[0]}
-                    deck={props.decks[4]}
-                    gameStatus={props.gameStatus}
                     isMyTurn={isYourTurn(4)}
                 />
             </div>
