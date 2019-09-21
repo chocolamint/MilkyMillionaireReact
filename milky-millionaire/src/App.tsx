@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import './App.scss';
 import CPUView from './components/CPUView';
-import CardView from './components/CardView';
 import Player from './components/PlayerView';
 import { GameStatus, Random, shuffle, deal, TurnResult, GameState } from './models/Game';
 import { allCards, Card } from './models/Card';
@@ -25,8 +24,6 @@ export default function App(props: { random: Random }) {
     } as GameState);
     const [discarding, setDiscarding] = useState(undefined as DiscardedCards | undefined);
     const [isTrickEnding, setIsTrickEnding] = useState(false);
-
-    const message = "";
 
     return (
         <div className="main">
@@ -54,13 +51,6 @@ export default function App(props: { random: Random }) {
                     onTurnEnd={handleTurnEnd}
                 />
             </div>
-            {message &&
-                <div className="message">
-                    <div className="message-text">
-                        {message}
-                    </div>
-                </div>
-            }
         </div>
     );
 
