@@ -1,21 +1,29 @@
-import React, { useState } from "react";
+import React, { useState, Dispatch } from "react";
 import "./PlayerView.scss";
 import CardView from "./CardView";
 import { Card, cardToString } from "../models/Card";
 import { GameStatus, TurnResult } from "../models/Game";
 import { Rule } from "../models/Rule";
 import PlayerButton from "./PlayerButton";
+import { AppState } from "../reducers";
+import { connect } from "react-redux";
+import { pass, ActionTypes, discard } from "../actions";
 
-export interface PlayerProps {
+interface OwnProps {
     rank: "大富豪" | "富豪" | "平民" | "貧民" | "大貧民";
     stackTop: readonly Card[];
     deck: readonly Card[];
     isMyTurn: boolean;
     gameStatus: GameStatus;
-    onTurnEnd: (result: TurnResult) => void;
+}
+interface PlayerActions {
+    discard: (cards: Card[]) => void;
+    pass: () => void;
 }
 
-export default function Player(props: Readonly<PlayerProps>) {
+type PlayerViewProps = OwnProps & AppState & PlayerActions;
+
+function PlayerView(props: Readonly<PlayerViewProps>) {
 
     const [stagings, setStagings] = useState([] as Card[]);
     const deck = Rule.sortCards(props.deck);
@@ -81,12 +89,24 @@ export default function Player(props: Readonly<PlayerProps>) {
     }
 
     function handlePassClick() {
-        props.onTurnEnd({ action: "pass" });
+        props.pass();
     }
 
     function handleDiscardClick() {
         const discards = stagings;
         setStagings([]);
-        props.onTurnEnd({ action: "discard", discards });
+        props.discard(discards);
     }
 }
+
+export default connect(
+    (state: PlayerViewProps) => ({
+        gameState: state.gameState,
+        isTrickEnding: state.isTrickEnding,
+        discarding: state.discarding
+    }),
+    (dispatch: Dispatch<ActionTypes>) => ({
+        discard: (cards: Card[]) => dispatch(discard(cards)),
+        pass: () => dispatch(pass())
+    })
+)(PlayerView);

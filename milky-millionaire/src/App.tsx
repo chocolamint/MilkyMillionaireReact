@@ -1,7 +1,7 @@
 import React, { Dispatch } from 'react';
 import './App.scss';
 import CPUView from './components/CPUView';
-import Player from './components/PlayerView';
+import PlayerView from './components/PlayerView';
 import { GameStatus, Random, shuffle, deal } from './models/Game';
 import { allCards, Card } from './models/Card';
 import gameInfo from './GameInfo';
@@ -52,12 +52,11 @@ function App(props: AppProps) {
                     })}
                 </ul>
                 <Board gameState={props.gameState} discarding={props.discarding} isTrickEnding={props.isTrickEnding} onDiscardingEnd={handleDiscardingEnd} onGoToNextTrick={handleGoToNextTrick} />
-                <Player {...gameInfo.player}
+                <PlayerView {...gameInfo.player}
                     stackTop={props.gameState.stack[0]}
                     deck={props.gameState.decks[4]}
                     gameStatus={props.gameState.gameStatus}
                     isMyTurn={isYourTurn(4)}
-                    onTurnEnd={() => { }}
                 />
             </div>
         </div>
