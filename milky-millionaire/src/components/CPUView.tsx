@@ -1,11 +1,11 @@
-import React, { useState, Dispatch } from "react";
+import React, { Dispatch } from "react";
 import "./CPUView.scss";
 import { Card, cardToString } from "../models/Card";
-import { Random } from "../models/Game";
-import { turnCPU } from "../models/CPU";
+import { Random, combination, TurnResult } from "../models/Game";
 import { connect } from "react-redux";
 import { discardStarted, passStarted, ActionTypes, passDone } from "../actions";
 import { AppState } from "../states";
+import { Rule } from "../models/Rule";
 
 interface OwnProps {
     imageFileName: any;
@@ -48,6 +48,30 @@ function CPUView(props: CPUViewProps) {
             </div>
         </div>
     );
+}
+
+function turnCPU(stackTop: readonly Card[] | undefined, deck: readonly Card[], random: Random): TurnResult {
+
+    const combinations = [
+        ...combination(deck, 1),
+        ...combination(deck, 2),
+        ...combination(deck, 3),
+        ...combination(deck, 4),
+    ];
+    const discardables = combinations.filter(x => Rule.canDiscard(stackTop, x));
+
+    const discards = discardables[random.next(discardables.length)];
+
+    if (discards) {
+        return {
+            action: "discard",
+            discards
+        };
+    } else {
+        return {
+            action: "pass"
+        };
+    }
 }
 
 function mapStateToProps(state: AppState) {
