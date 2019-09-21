@@ -34,7 +34,7 @@ export default function CPU(props: CPUProps) {
     }
 
     return (
-        <div className={`cpu ${isPassing ? "pass" : ""}`}>
+        <div className={`cpu ${isPassing ? "pass" : ""} ${props.cards.length === 0 ? "clear" : ""}`}>
             <div className="name">
                 {props.name}
             </div>
