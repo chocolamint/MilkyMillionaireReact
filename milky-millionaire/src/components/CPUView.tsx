@@ -62,7 +62,11 @@ function CPUView(props: CPUViewProps) {
 }
 
 export default connect(
-    (state: CPUViewProps) => state,
+    (state: CPUViewProps) => ({
+        gameState: state.gameState,
+        isTrickEnding: state.isTrickEnding,
+        discarding: state.discarding
+    }),
     (dispatch: Dispatch<ActionTypes>) => ({
         discard: (cards: Card[]) => dispatch(discard(cards)),
         pass: () => dispatch(pass())

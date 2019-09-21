@@ -22,10 +22,6 @@ const initialState = {
     discarding: undefined
 };
 
-function assertNever(x: never): never {
-    throw new Error("never");
-}
-
 export function reducer(state: AppState | undefined = initialState, action: Actions): AppState {
     switch (action.type) {
         case START_GAME:
@@ -33,6 +29,7 @@ export function reducer(state: AppState | undefined = initialState, action: Acti
                 ...state,
                 gameState: {
                     ...state.gameState,
+                    gameStatus: GameStatus.Playing,
                     decks: action.payload.decks,
                     currentTurn: action.payload.initialTurn
                 }

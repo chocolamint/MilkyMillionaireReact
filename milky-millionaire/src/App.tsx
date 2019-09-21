@@ -31,6 +31,7 @@ function App(props: AppProps) {
         const dealCards = shuffle(deal(cards, 5), random);
         const initialTurn = random.next(5);
         props.startGame(dealCards, initialTurn);
+        return (<div></div>);
     }
 
     return (
@@ -40,7 +41,11 @@ function App(props: AppProps) {
                     {gameInfo.cpus.map((cpu, i) => {
                         return (
                             <li className="cpu" key={`cpu-${i}`}>
-                                <CPUView
+                                <CPUView {...cpu}
+                                    isMyTurn={isYourTurn(i)}
+                                    cards={props.gameState.decks[i]}
+                                    stackTop={props.gameState.stack[0]}
+                                    random={random}
                                 />
                             </li>
                         );
@@ -75,7 +80,11 @@ function App(props: AppProps) {
 }
 
 export default connect(
-    (state: AppProps) => state,
+    (state: AppProps) => ({
+        discarding: state.discarding,
+        isTrickEnding: state.isTrickEnding,
+        gameState: state.gameState
+    }),
     (dispatch: Dispatch<ActionTypes>) => ({
         startGame: (decks: Card[][], initialTurn: number) => dispatch(startGame(decks, initialTurn)),
         endDiscarding: () => dispatch(endDiscarding()),

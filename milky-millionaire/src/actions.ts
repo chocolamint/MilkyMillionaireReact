@@ -1,5 +1,4 @@
 import { Card } from "./models/Card";
-import { Action } from "redux";
 
 export const START_GAME = 'START_GAME';
 export const DISCARD = 'DISCARD';
