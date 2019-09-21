@@ -1,24 +1,9 @@
 import { GameStatus } from "./models/Game";
 import { DISCARD, ActionTypes as Actions, PASS, START_GAME, GO_TO_NEXT_TRICK, END_DISCARDING, GONE_TO_NEXT_TRICK } from "./actions";
 import { Card } from "./models/Card";
+import { AppState } from "./states";
 
-export interface DiscardedCards {
-    by: number;
-    cards: Card[];
-}
-
-export interface AppState {
-    gameStatus: GameStatus;
-    decks: Card[][];
-    currentTurn: number;
-    stack: Card[][];
-    passCount: number;
-    lastDiscard: number | undefined;
-    isTrickEnding: boolean;
-    discarding: DiscardedCards | undefined;
-}
-
-const initialState = {
+const initialState: AppState = {
     gameStatus: GameStatus.Init,
     decks: [] as Card[][],
     currentTurn: 0,

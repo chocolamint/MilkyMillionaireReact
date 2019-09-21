@@ -5,7 +5,7 @@ import { Random } from "../models/Game";
 import { turnCPU } from "../models/CPU";
 import { connect } from "react-redux";
 import { discard, pass, ActionTypes } from "../actions";
-import { AppState } from "../reducers";
+import { AppState } from "../states";
 
 interface OwnProps {
     imageFileName: any;

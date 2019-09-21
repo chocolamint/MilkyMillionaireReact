@@ -7,7 +7,7 @@ import { Rule } from "../models/Rule";
 import PlayerButton from "./PlayerButton";
 import { connect } from "react-redux";
 import { pass, ActionTypes, discard } from "../actions";
-import { AppState } from "../reducers";
+import { AppState } from "../states";
 
 interface OwnProps {
     rank: "大富豪" | "富豪" | "平民" | "貧民" | "大貧民";

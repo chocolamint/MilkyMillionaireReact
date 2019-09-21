@@ -1,17 +1,16 @@
 import React, { Dispatch } from "react";
 import CardView from "./CardView";
-import { cardToString, Card } from "../models/Card";
+import { cardToString } from "../models/Card";
 import "./Board.scss";
 import { goneToNextTrick, ActionTypes, endDiscarding } from "../actions";
-import { AppState, DiscardedCards } from "../reducers";
 import { connect } from "react-redux";
+import { AppState } from "../states";
 
 interface OwnProps {
 
 }
 
 type BoardProps = OwnProps & ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps>;
-
 
 function Board(props: Readonly<BoardProps>) {
     return (

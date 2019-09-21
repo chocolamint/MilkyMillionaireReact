@@ -6,9 +6,9 @@ import { GameStatus, Random, shuffle, deal } from './models/Game';
 import { allCards, Card } from './models/Card';
 import gameInfo from './GameInfo';
 import Board from './components/Board';
-import { AppState } from './reducers';
 import { goToNextTrick, endDiscarding, startGame, ActionTypes, goneToNextTrick } from './actions';
 import { connect } from 'react-redux';
+import { AppState } from './states';
 
 interface OwnProps {
     random: Random;
