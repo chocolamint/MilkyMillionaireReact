@@ -23,8 +23,11 @@ export default function App(props: { random: Random }) {
         decks: dealCards,
         currentTurn,
         stack: [] as Card[][],
+        passCount: 0,
+        lastDiscard: undefined as number | undefined
     });
     const [discarding, setDiscarding] = useState(undefined as DiscardedCards | undefined);
+    const [isTrickEnding, setIsTrickEnding] = useState(false);
 
     const gameInfo = {
         cpus: [{
@@ -62,7 +65,7 @@ export default function App(props: { random: Random }) {
                         return (
                             <li className="cpu" key={`cpu-${i}`}>
                                 <CPUView {...cpu}
-                                    isMyTurn={i === gameState.currentTurn && discarding === undefined}
+                                    isMyTurn={isYourTurn(i)}
                                     cards={gameState.decks[i]}
                                     stackTop={gameState.stack[0]}
                                     random={random}
@@ -72,7 +75,7 @@ export default function App(props: { random: Random }) {
                     })}
                 </ul>
                 <div className="board">
-                    <div className="discarded">
+                    <div className={`discarded ${isTrickEnding ? "next-trick" : ""}`} onAnimationEnd={goToNextTrick}>
                         {gameState.stack.map(cards =>
                             <div className="card-set" key={`discarded-set-${cards.map(cardToString).join("-")}`}>
                                 {cards.map(card =>
@@ -99,7 +102,7 @@ export default function App(props: { random: Random }) {
                     stackTop={gameState.stack[0]}
                     deck={gameState.decks[4]}
                     gameStatus={gameState.gameStatus}
-                    isMyTurn={gameState.currentTurn === 4}
+                    isMyTurn={isYourTurn(4)}
                     onTurnEnd={handleTurnEnd}
                 />
             </div>
@@ -113,14 +116,40 @@ export default function App(props: { random: Random }) {
         </div>
     );
 
+    function isYourTurn(position: number) {
+        return gameState.currentTurn === position &&
+            discarding === undefined &&
+            !isTrickEnding;
+    }
+
+    function goToNextTrick() {
+        setIsTrickEnding(false);
+        setGameState({
+            ...gameState,
+            stack: [],
+            currentTurn: gameState.lastDiscard!,
+            passCount: 0,
+            lastDiscard: undefined
+        });
+    }
+
     function handleTurnEnd(result: TurnResult) {
         const deck = gameState.decks[gameState.currentTurn];
         if (result.action === "pass") {
-            setGameState({
-                ...gameState,
-                currentTurn: getNextTurn()
-            });
+            console.log(`${gameState.currentTurn}がパス`);
+            const passCount = gameState.passCount + 1;
+            if (passCount === 4) {
+                console.log(`次のトリックへ`);
+                setIsTrickEnding(true);
+            } else {
+                setGameState({
+                    ...gameState,
+                    currentTurn: getNextTurn(),
+                    passCount
+                });
+            }
         } else {
+            console.log(`${gameState.currentTurn}が${result.discards.map(cardToString).join(",")}を捨てた`);
             const newDeck = deck.filter(x => !result.discards.includes(x));
             setDiscarding({
                 by: gameState.currentTurn,
@@ -130,6 +159,8 @@ export default function App(props: { random: Random }) {
                 ...gameState,
                 stack: gameState.stack,
                 decks: gameState.decks.map((d, i) => i === gameState.currentTurn ? newDeck : d),
+                lastDiscard: gameState.currentTurn,
+                passCount: 0
             });
         }
     }

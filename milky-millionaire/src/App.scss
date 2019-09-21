@@ -27,6 +27,20 @@
 
             .discarded {
 
+                &.next-trick {
+                    animation: next-trick-animation 1000ms forwards;
+                }
+
+                @keyframes next-trick-animation {
+                    from {
+                        transform: translate(0, 0);
+                    }
+
+                    to {
+                        transform: translate(-65vw, 0);
+                    }
+                }
+
                 .card-set {
                     display: none;
 
@@ -87,7 +101,7 @@
             }
 
             @each $i,
-            $x in (0: -16vw, 1: 6vw, 2: 6vw, 3: 16vw) {
+            $x in (0: -16vw, 1: -6vw, 2: 6vw, 3: 16vw) {
 
                 @keyframes discard-animation-#{$i} {
                     from {
