@@ -123,11 +123,12 @@ export default function App(props: { random: Random }) {
     }
 
     function goToNextTrick() {
+        const nextTurn = getNextTurn();
         setIsTrickEnding(false);
         setGameState({
             ...gameState,
             stack: [],
-            currentTurn: gameState.lastDiscard!,
+            currentTurn: nextTurn,
             passCount: 0,
             lastDiscard: undefined
         });
@@ -136,10 +137,8 @@ export default function App(props: { random: Random }) {
     function handleTurnEnd(result: TurnResult) {
         const deck = gameState.decks[gameState.currentTurn];
         if (result.action === "pass") {
-            console.log(`${gameState.currentTurn}がパス`);
             const passCount = gameState.passCount + 1;
             if (passCount === 4) {
-                console.log(`次のトリックへ`);
                 setIsTrickEnding(true);
             } else {
                 setGameState({
@@ -149,7 +148,6 @@ export default function App(props: { random: Random }) {
                 });
             }
         } else {
-            console.log(`${gameState.currentTurn}が${result.discards.map(cardToString).join(",")}を捨てた`);
             const newDeck = deck.filter(x => !result.discards.includes(x));
             setDiscarding({
                 by: gameState.currentTurn,
@@ -177,6 +175,22 @@ export default function App(props: { random: Random }) {
     }
 
     function getNextTurn() {
-        return gameState.currentTurn === 4 ? 0 : gameState.currentTurn + 1;
+
+        let p = isTrickEnding ?
+            gameState.lastDiscard! :
+            nextPosition(gameState.currentTurn);
+
+        while (true) {
+            if (!isCleared(p)) return p;
+            p = nextPosition(p);
+        }
+
+        function nextPosition(pos: number) {
+            return pos === 4 ? 0 : pos + 1;
+        }
+    }
+
+    function isCleared(position: number) {
+        return gameState.decks[position].length === 0;
     }
 }
