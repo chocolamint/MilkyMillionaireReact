@@ -54,13 +54,7 @@ function App(props: AppProps) {
                         );
                     })}
                 </ul>
-                <Board
-                    stack={props.stack}
-                    discarding={props.discarding}
-                    isTrickEnding={props.isTrickEnding}
-                    onDiscardingEnd={handleDiscardingEnd}
-                    onGoToNextTrick={handleGoToNextTrick}
-                />
+                <Board />
                 <PlayerView {...gameInfo.player}
                     stackTop={props.stack[0]}
                     deck={props.decks[4]}

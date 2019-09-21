@@ -1,25 +1,28 @@
-import React from "react";
+import React, { Dispatch } from "react";
 import CardView from "./CardView";
 import { cardToString, Card } from "../models/Card";
 import "./Board.scss";
+import { goneToNextTrick, ActionTypes, endDiscarding } from "../actions";
+import { AppState, DiscardedCards } from "../reducers";
+import { connect } from "react-redux";
 
-interface BoardProps {
-    stack: Card[][];
-    discarding: DiscardedCards | undefined;
-    isTrickEnding: boolean;
-    onGoToNextTrick: () => void;
-    onDiscardingEnd: () => void;
+interface OwnProps {
 }
 
-export interface DiscardedCards {
-    by: number;
-    cards: Card[];
+type OwnState = Pick<AppState, "stack" | "discarding" | "isTrickEnding">;
+
+interface OwnActions {
+    endDiscarding: () => void;
+    goneToNextTrick: () => void;
 }
 
-export default function Board(props: Readonly<BoardProps>) {
+type BoardProps = OwnProps & OwnState & OwnActions;
+
+
+function Board(props: Readonly<BoardProps>) {
     return (
         <div className="board">
-            <div className={`discarded ${props.isTrickEnding ? "next-trick" : ""}`} onAnimationEnd={handleNextTrickAnimationEnd}>
+            <div className={`discarded ${props.isTrickEnding ? "next-trick" : ""}`} onAnimationEnd={props.goneToNextTrick}>
                 {props.stack.map(cards =>
                     <div className="card-set" key={`discarded-set-${cards.map(cardToString).join("-")}`}>
                         {cards.map(card =>
@@ -31,7 +34,7 @@ export default function Board(props: Readonly<BoardProps>) {
                 )}
             </div>
             {props.discarding &&
-                <div className={`discardings discardings-${props.discarding.by}`} onAnimationEnd={handleDiscardingAnimationEnd}>
+                <div className={`discardings discardings-${props.discarding.by}`} onAnimationEnd={props.endDiscarding}>
                     <div className="card-set">
                         {props.discarding.cards.map(card =>
                             <div className="card-container" key={`discardings-card-${cardToString(card)}`}>
@@ -43,12 +46,16 @@ export default function Board(props: Readonly<BoardProps>) {
             }
         </div>
     );
-
-    function handleNextTrickAnimationEnd() {
-        props.onGoToNextTrick();
-    }
-
-    function handleDiscardingAnimationEnd() {
-        props.onDiscardingEnd();
-    }
 }
+
+export default connect(
+    (state: AppState) => ({
+        stack: state.stack,
+        discarding: state.discarding,
+        isTrickEnding: state.isTrickEnding,
+    }),
+    (dispatch: Dispatch<ActionTypes>) => ({
+        goneToNextTrick: () => dispatch(goneToNextTrick()),
+        endDiscarding: () => dispatch(endDiscarding())
+    })
+)(Board);

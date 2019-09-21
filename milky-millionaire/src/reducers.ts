@@ -1,7 +1,11 @@
 import { GameStatus } from "./models/Game";
 import { DISCARD, ActionTypes as Actions, PASS, START_GAME, GO_TO_NEXT_TRICK, END_DISCARDING, GONE_TO_NEXT_TRICK } from "./actions";
-import { DiscardedCards } from "./components/Board";
 import { Card } from "./models/Card";
+
+export interface DiscardedCards {
+    by: number;
+    cards: Card[];
+}
 
 export interface AppState {
     gameStatus: GameStatus;
