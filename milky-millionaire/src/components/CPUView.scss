@@ -2,11 +2,9 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    position: relative;
 
     &.pass {
-
-        position: relative;
-
         @mixin pass() {
             position: absolute;
             color: #ffffff;
@@ -39,6 +37,49 @@
             top: 55%;
             left: 8vw;
             @include pass();
+        }
+    }
+
+    &.clear {
+        @mixin clear() {
+            position: absolute;
+            color: #ffffff;
+            font-family: "M+ 1p black";
+            font-weight: 900;
+            background: hsla(51, 94%, 49%, 0.911);
+            font-size: 6vw;
+            padding: 1vw;
+            z-index: 1;
+            border-radius: 1vw;
+            display: inline-block;
+            width: 6vw;
+            height: 6vw;
+            line-height: 6vw;
+            vertical-align: middle;
+            text-align: center;
+            box-shadow: hsla(51, 94%, 20%, 0.911) 0.4vw 0.4vw 0.4vw;
+            text-shadow: hsla(51, 94%, 20%, 0.911) 0.4vw 0.4vw 0.4vw;
+        }
+
+        &:before {
+            content: "あ";
+            top: 44%;
+            left: -2vw;
+            @include clear();
+        }
+
+        .name:after {
+            content: "が";
+            top: 50%;
+            left: 5vw;
+            @include clear();
+        }
+
+        &:after {
+            content: "り";
+            top: 56%;
+            left: 11vw;
+            @include clear();
         }
     }
 

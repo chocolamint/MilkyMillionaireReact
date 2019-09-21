@@ -21,7 +21,7 @@ export default function Player(props: Readonly<PlayerProps>) {
     const deck = Rule.sortCards(props.deck);
 
     return (
-        <div className="player">
+        <div className={`player ${deck.length === 0 ? "clear" : ""}`}>
             <div className="player-buttons">
                 <PlayerButton className="pass-button" disabled={!props.isMyTurn} buttonColor="green" onClick={handlePassClick}>
                     パス
