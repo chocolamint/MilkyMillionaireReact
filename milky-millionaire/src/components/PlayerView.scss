@@ -1,5 +1,50 @@
 .player {
 
+    position: relative;
+
+    &.clear {
+        @mixin clear() {
+            position: absolute;
+            color: #ffffff;
+            font-family: "M+ 1p black";
+            font-weight: 900;
+            background: hsla(51, 94%, 49%, 0.911);
+            font-size: 10vw;
+            padding: 1vw;
+            z-index: 1;
+            border-radius: 1vw;
+            display: inline-block;
+            width: 12vw;
+            height: 12vw;
+            line-height: 12vw;
+            vertical-align: middle;
+            text-align: center;
+            box-shadow: hsla(51, 94%, 20%, 0.911) 0.4vw 0.4vw 0.4vw;
+            text-shadow: hsla(51, 94%, 20%, 0.911) 0.4vw 0.4vw 0.4vw;
+        }
+
+        &:before {
+            content: "あ";
+            top: 46%;
+            left: 26vw;
+            @include clear();
+        }
+
+        .deck:after {
+            content: "が";
+            top: 54%;
+            left: 43vw;
+            @include clear();
+        }
+
+        &:after {
+            content: "り";
+            top: 50%;
+            left: 60vw;
+            @include clear();
+        }
+    }
+
     .player-buttons {
         display: flex;
         margin: 0 4vw;
