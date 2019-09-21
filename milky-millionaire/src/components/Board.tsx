@@ -7,16 +7,10 @@ import { AppState, DiscardedCards } from "../reducers";
 import { connect } from "react-redux";
 
 interface OwnProps {
+
 }
 
-type OwnState = Pick<AppState, "stack" | "discarding" | "isTrickEnding">;
-
-interface OwnActions {
-    endDiscarding: () => void;
-    goneToNextTrick: () => void;
-}
-
-type BoardProps = OwnProps & OwnState & OwnActions;
+type BoardProps = OwnProps & ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps>;
 
 
 function Board(props: Readonly<BoardProps>) {
@@ -48,14 +42,19 @@ function Board(props: Readonly<BoardProps>) {
     );
 }
 
-export default connect(
-    (state: AppState) => ({
+function mapStateToProps(state: AppState) {
+    return {
         stack: state.stack,
         discarding: state.discarding,
         isTrickEnding: state.isTrickEnding,
-    }),
-    (dispatch: Dispatch<ActionTypes>) => ({
+    };
+}
+
+function mapDispatchToProps(dispatch: Dispatch<ActionTypes>) {
+    return {
         goneToNextTrick: () => dispatch(goneToNextTrick()),
         endDiscarding: () => dispatch(endDiscarding())
-    })
-)(Board);
+    };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Board);

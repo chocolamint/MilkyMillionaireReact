@@ -14,16 +14,7 @@ interface OwnProps {
     random: Random;
 }
 
-type OwnState = Pick<AppState, "gameStatus" | "decks" | "stack" | "discarding" | "isTrickEnding" | "currentTurn">;
-
-interface OwnActions {
-    startGame: (decks: Card[][], initialTurn: number) => void;
-    endDiscarding: () => void;
-    goToNextTrick: () => void;
-    goneToNextTrick: () => void;
-}
-
-type AppProps = OwnProps & OwnState & OwnActions;
+type AppProps = OwnProps & ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps>;
 
 function App(props: AppProps) {
 
@@ -70,30 +61,25 @@ function App(props: AppProps) {
             props.discarding === undefined &&
             !props.isTrickEnding;
     }
-
-    function handleGoToNextTrick() {
-        props.goneToNextTrick();
-    }
-
-    function handleDiscardingEnd() {
-        props.endDiscarding();
-    }
-
 }
 
-export default connect(
-    (state: AppProps) => ({
+function mapStateToProps(state: AppState) {
+    return {
         discarding: state.discarding,
         isTrickEnding: state.isTrickEnding,
         gameStatus: state.gameStatus,
         decks: state.decks,
         stack: state.stack,
         currentTurn: state.currentTurn
-    }),
-    (dispatch: Dispatch<ActionTypes>) => ({
+    };
+}
+function mapDispatchToProps(dispatch: Dispatch<ActionTypes>) {
+    return {
         startGame: (decks: Card[][], initialTurn: number) => dispatch(startGame(decks, initialTurn)),
         endDiscarding: () => dispatch(endDiscarding()),
         goToNextTrick: () => dispatch(goToNextTrick()),
         goneToNextTrick: () => dispatch(goneToNextTrick())
-    })
-)(App);
+    };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);

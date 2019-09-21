@@ -18,14 +18,7 @@ interface OwnProps {
     random: Random;
 }
 
-type OwnState = {};
-
-interface CPUActions {
-    discard: (cards: Card[]) => void;
-    pass: () => void;
-}
-
-type CPUViewProps = OwnProps & OwnState & CPUActions;
+type CPUViewProps = OwnProps & ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps>;
 
 function CPUView(props: CPUViewProps) {
 
@@ -62,10 +55,15 @@ function CPUView(props: CPUViewProps) {
     );
 }
 
-export default connect(
-    (state: CPUViewProps) => ({}),
-    (dispatch: Dispatch<ActionTypes>) => ({
+function mapStateToProps(state: AppState) {
+    return {};
+}
+
+function mapDispatchToProps(dispatch: Dispatch<ActionTypes>) {
+    return {
         discard: (cards: Card[]) => dispatch(discard(cards)),
         pass: () => dispatch(pass())
-    })
-)(CPUView);
+    };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(CPUView);

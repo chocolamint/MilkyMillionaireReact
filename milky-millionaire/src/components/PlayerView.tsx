@@ -7,6 +7,7 @@ import { Rule } from "../models/Rule";
 import PlayerButton from "./PlayerButton";
 import { connect } from "react-redux";
 import { pass, ActionTypes, discard } from "../actions";
+import { AppState } from "../reducers";
 
 interface OwnProps {
     rank: "大富豪" | "富豪" | "平民" | "貧民" | "大貧民";
@@ -15,12 +16,8 @@ interface OwnProps {
     isMyTurn: boolean;
     gameStatus: GameStatus;
 }
-interface PlayerActions {
-    discard: (cards: Card[]) => void;
-    pass: () => void;
-}
 
-type PlayerViewProps = OwnProps & {} & PlayerActions;
+type PlayerViewProps = OwnProps & ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps>;
 
 function PlayerView(props: Readonly<PlayerViewProps>) {
 
@@ -98,11 +95,15 @@ function PlayerView(props: Readonly<PlayerViewProps>) {
     }
 }
 
-export default connect(
-    (state: PlayerViewProps) => ({
-    }),
-    (dispatch: Dispatch<ActionTypes>) => ({
+function mapStateToProps(state: AppState) {
+    return {};
+}
+
+function mapDispatchToProps(dispatch: Dispatch<ActionTypes>) {
+    return {
         discard: (cards: Card[]) => dispatch(discard(cards)),
         pass: () => dispatch(pass())
-    })
-)(PlayerView);
+    };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(PlayerView);
